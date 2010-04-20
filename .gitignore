@@ -1,0 +1,8 @@
+# Ignore backups
+*~
+
+# Ignore XCode-specific and OSX-specific files and folders
+build/**/*
+*.xcodeproj
+*.plist
+.DS_Store
