@@ -1,7 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include <SFML/Sprite.hpp>
+#include <SFML/Graphics.hpp>
 
 #include <string>
 #include <iostream>

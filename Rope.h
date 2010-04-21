@@ -5,11 +5,13 @@
 #include <iostream>
 using namespace std;
 
+#include "Player.h"
 #include "Vector2D.h"
-#include <SFML/Sprite.hpp>
+#include <SFML/Graphics.hpp>
 
 class Rope : vector<Vector2D> {
 private:
+  int maxLength;
   Player * player;
   sf::Shape * lines;
   

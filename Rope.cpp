@@ -1,6 +1,6 @@
 #include "Rope.h"
 
-Rope::Rope(RopeNode* player, double angle, int maxLength = 30) {
+Rope::Rope(Player * player, int maxLength) {
   this->player = player;
   this->maxLength = maxLength;
 
@@ -18,7 +18,7 @@ void Rope::Update(float t) {
   // update code here!
 }
 
-sf::Shape * GetLines() {
+sf::Shape * Rope::GetLines() {
   return this->lines;
 }
 

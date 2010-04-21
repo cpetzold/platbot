@@ -11,8 +11,8 @@ public:
   float x; 
   float y;
   
-	Vector2D(float X = 0, float Y = 0);
-	~Vector2D() {};
+	Vector2D(float x = 0, float y = 0);
+	~Vector2D();
   
 	Vector2D operator*(float scalar) const;
   
