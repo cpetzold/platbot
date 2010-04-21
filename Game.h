@@ -1,11 +1,3 @@
-/*
- *  Game.h
- *  ropebot
- *
- *  Created by Conner Petzold on 4/17/10.
- *
- */
-
 #ifndef GAME_H
 #define GAME_H
 

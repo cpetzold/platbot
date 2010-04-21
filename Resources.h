@@ -1,12 +1,3 @@
-/*
- *  Resources.h
- *  ropebot
- *
- *  Created by Conner Petzold on 4/17/10.
- *  Copyright 2010 CSU. All rights reserved.
- *
- */
-
 #ifndef RESOURCES_H
 #define RESOURCES_H
 
@@ -14,6 +5,7 @@
 #include <SFML/Audio.hpp>
 
 #include <string>
+#include <iostream>
 using namespace std;
 
 class Resources {

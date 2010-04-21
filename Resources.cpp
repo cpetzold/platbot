@@ -1,15 +1,4 @@
-/*
- *  Resources.cpp
- *  ropebot
- *
- *  Created by Conner Petzold on 4/17/10.
- *  Copyright 2010 CSU. All rights reserved.
- *
- */
-
 #include "Resources.h"
-#include <iostream>
-using namespace std;
 
 Resources::Resources() {
   this->dataPath = "data/";

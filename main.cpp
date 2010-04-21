@@ -2,8 +2,8 @@
 
 int main() {
   
-  //Game game("Ropebot");
-  Game game("Ropebot", 800, 600);
+  Game game("Ropebot");
+  //Game game("Ropebot", 800, 600);
   game.Init();
   game.Run();
   

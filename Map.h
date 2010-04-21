@@ -1,12 +1,3 @@
-/*
- *  Map.h
- *  ropebot
- *
- *  Created by Conner Petzold on 4/17/10.
- *  Copyright 2010 CSU. All rights reserved.
- *
- */
-
 #ifndef MAP_H
 #define MAP_H
 

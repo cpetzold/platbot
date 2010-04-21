@@ -1,11 +1,3 @@
-/*
- *  Map.cpp
- *  ropebot
- *
- *  Created by Conner Petzold on 4/17/10.
- *
- */
-
 #include "Map.h"
 
 Map::Map() {

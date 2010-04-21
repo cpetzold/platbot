@@ -1,11 +1,3 @@
-/*
-*  Game.cpp
-*  ropebot
-*
-*  Created by Conner Petzold on 4/17/10.
-*
-*/
-
 #include "Game.h"
 
 Game::Game(string title) {
