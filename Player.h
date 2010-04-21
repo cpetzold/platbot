@@ -27,7 +27,7 @@ public:
   
   void Update(float t, Map & m);
   
-  sf::IntRect GetAABB();
+  sf::IntRect GetAABB(Vector2D pos);
   
   bool IsColliding(Map * m);
   void HandleCollision();
