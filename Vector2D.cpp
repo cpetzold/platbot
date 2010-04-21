@@ -12,13 +12,42 @@ Vector2D::~Vector2D() {
 Vector2D Vector2D::operator*(float scalar) const {
   return Vector2D(this->x * scalar, this->y * scalar);
 }
+void Vector2D::operator*=(float scalar) {
+  this->x *= scalar;
+  this->y *= scalar;
+}
+
+Vector2D Vector2D::operator/(float scalar) const {
+  return Vector2D(this->x / scalar, this->y / scalar);
+}
 
 Vector2D Vector2D::operator+(const Vector2D &vect) const {
   return Vector2D(this->x + vect.x, this->y + vect.y);
 }
+void Vector2D::operator+=(const Vector2D &vect) {
+  this->x += vect.x;
+  this->y += vect.y;
+}
 
 Vector2D Vector2D::operator-(const Vector2D &vect) const {
   return Vector2D(this->x - vect.x, this->y - vect.y);
+}
+void Vector2D::operator-=(const Vector2D &vect) {
+  this->x -= vect.x;
+  this->y -= vect.y;
+}
+
+void Vector2D::SetXY(float x, float y) {
+  this->x = x;
+  this->y = y;
+}
+
+void Vector2D::Set(sf::Vector2<float> v) {
+  this->x = v.x;
+  this->y = v.y;
+}
+sf::Vector2<float> Vector2D::Get() {
+  return sf::Vector2<float>(this->x, this->y);
 }
 
 void Vector2D::Rotate(float angle) {

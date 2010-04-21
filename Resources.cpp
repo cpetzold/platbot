@@ -20,12 +20,6 @@ Resources::~Resources() {
 
 sf::Image* Resources::GetImage(string path) {
   path = this->dataPath + this->imagesPath + path;
-  
-  char cpath[1024];
-  getcwd(cpath, sizeof(cpath));
-  
-  cout << cpath << endl;
-  
   map <string, sf::Image*>::iterator it = this->images.find(path);
   if (it == this->images.end()) {
     this->images[path] = new sf::Image();

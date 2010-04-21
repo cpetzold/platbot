@@ -7,7 +7,7 @@
 #include <iostream>
 using namespace std;
 
-class Map : sf::Image {
+class Map : sf::Sprite {
 private:
   sf::Image* image;
   sf::Image mask;
@@ -19,11 +19,11 @@ public:
   Map(sf::Image& mask, sf::Image& terrain);
   ~Map();
   
-  sf::Image* GetImage();
-  sf::Sprite GetSprite();
-  
   void SetMask(sf::Image& mask);
   void SetTerrain(sf::Image& terrain);
+  
+  sf::IntRect GetAABB();
+  
   void Generate();
   
 };

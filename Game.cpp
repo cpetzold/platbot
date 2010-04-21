@@ -1,15 +1,10 @@
 #include "Game.h"
 
-Game::Game(string title) {
-  this->window.Create(sf::VideoMode::GetDesktopMode(), title.c_str(), sf::Style::Fullscreen);
-  this->window.SetFramerateLimit(0);
+Game::Game(string title, sf::VideoMode videomode, unsigned long style, int fps) {
+  this->window.Create(videomode, title.c_str(), style);
+  this->window.SetFramerateLimit(fps);
   this->view = window.GetDefaultView();
-}
-
-Game::Game(string title, int width, int height) {
-  this->window.Create(sf::VideoMode(width, height, 32), title.c_str());
-  this->window.SetFramerateLimit(0);
-  this->view = window.GetDefaultView();
+  this->fps = fps;
 }
 
 Game::~Game() {
@@ -18,29 +13,35 @@ Game::~Game() {
 
 bool Game::Init() {
   
-  Map map = Map(*(this->data.GetImage("maps/test2.png")), *(this->data.GetImage("tilesets/tribal.png")));
-  this->sprites.push_back(map.GetSprite());
+  this->map = new Map(*(this->data.GetImage("maps/test1.png")), *(this->data.GetImage("tilesets/tribal.png")));
+  this->player = new Player(*(this->data.GetImage("player.png")), *(this->data.GetImage("player_mask.png")));
   
-  
+  this->sprites.push_back((sf::Sprite*)this->map);
+  this->sprites.push_back((sf::Sprite*)this->player);
   
   
   return true;
 }
 
 void Game::Update() {
-  //Update stuff
+  float t = this->clock.GetElapsedTime() * 50;
+  this->clock.Reset();
+  
+  this->player->Update(t, *this->map);
+  this->view.SetCenter(((sf::Drawable *)this->player)->GetPosition());
 }
 
 void Game::Draw() {
   this->window.Clear();
   this->window.SetView(this->view);
   
-  vector <sf::Sprite>::iterator it = this->sprites.begin();
+  vector <sf::Sprite *>::iterator it = this->sprites.begin();
   while (it != this->sprites.end()) {
-    this->window.Draw(*it);
+    this->window.Draw(**it);
     ++it;
   }
-    
+
+  //cout << 1.f / this->window.GetFrameTime() << endl; // show fps
   this->window.Display();
 }
 
@@ -86,9 +87,6 @@ void Game::HandleInput() {
   if (input.IsKeyDown(sf::Key::Left)) {
     cout << "left" << endl;
   }
-  
-  
-  this->view.SetCenter(input.GetMouseX(), input.GetMouseY());
   
 }
 

@@ -1,6 +1,8 @@
 #ifndef VECTOR2D_H
 #define VECTOR2D_H
 
+#include <SFML/System/Vector2.hpp>
+
 #include <iostream>
 #include <string>
 #include <math.h>
@@ -15,10 +17,20 @@ public:
 	~Vector2D();
   
 	Vector2D operator*(float scalar) const;
+  void operator*=(float scalar);
+  
+  Vector2D operator/(float scalar) const;
   
 	Vector2D operator+(const Vector2D &vect) const;
+  void operator+=(const Vector2D &vect);
   
 	Vector2D operator-(const Vector2D &vect) const;
+  void operator-=(const Vector2D &vect);
+  
+  void SetXY(float x, float y);
+  
+  void Set(sf::Vector2<float> v);
+  sf::Vector2<float> Get();
   
 	void Rotate(float angle);
   

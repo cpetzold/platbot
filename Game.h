@@ -10,30 +10,32 @@
 using namespace std;
 
 #include "Resources.h"
+#include "Player.h"
 #include "Map.h"
 
 class Game {
 private:
-  sf::Event             event;        // The event
-  sf::View              view;          // The view
-  sf::RenderWindow      window;     // The render window
+  sf::Clock             clock;
+  sf::Event             event;
+  sf::View              view;
+  sf::RenderWindow      window;
+  int                   fps;
   
+  vector <sf::Sprite *> sprites;
   Resources             data;
-  vector <sf::Sprite>   sprites;
-  sf::String            logo;
-  Map                   map;
+  Player *              player;
+  Map *                 map;
   
 public:
   
-  Game(string title);
-  Game(string title, int width, int height);
-  ~Game();                        // The destructor
+  Game(string title, sf::VideoMode videomode = sf::VideoMode(800,600,32), unsigned long style = sf::Style::Close, int fps = 50);
+  ~Game();
   
-  bool Init();                    // Initializes everything not in the constructor
-  void HandleEvents();                // Handles input from the player
+  bool Init();
+  void HandleEvents();
   void HandleInput();
-  void Draw();                    // Draws the scene
-  void Update();                    // Updates variables, game object, etc.
+  void Draw();
+  void Update();
   void Run();
 };
 
