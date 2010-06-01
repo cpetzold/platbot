@@ -21,10 +21,10 @@ private:
   sf::RenderWindow      window;
   int                   fps;
   
-  vector <sf::Sprite *> sprites;
+  vector <sf::Sprite>   sprites;
   Resources             data;
-  Player *              player;
-  Map *                 map;
+  Player                player;
+  Map                   map;
   
 public:
   

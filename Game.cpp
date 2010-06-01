@@ -13,34 +13,36 @@ Game::~Game() {
 
 bool Game::Init() {
   
-  this->map = new Map(*(this->data.GetImage("maps/test1.png")), *(this->data.GetImage("tilesets/tribal.png")));
-  this->player = new Player(*(this->data.GetImage("player.png")), *(this->data.GetImage("player_mask.png")));
+  this->map = Map("test.map", this->data);
+  //this->player = Player(this->data.GetImage("player.png"), this->data.GetImage("player_mask.png"), sf::Vector2f(-400, -900));
   
-  this->sprites.push_back((sf::Sprite*)this->map);
-  this->sprites.push_back((sf::Sprite*)this->player);
+  //this->sprites.push_back((sf::Sprite)this->player);
   
   
   return true;
 }
 
 void Game::Update() {
-  float t = this->clock.GetElapsedTime() * 50;
+  float t = this->clock.GetElapsedTime() * this->fps;
   this->clock.Reset();
   
-  this->player->Update(t, *this->map);
-  this->view.SetCenter(((sf::Drawable *)this->player)->GetPosition());
+  //this->player.Update(t, this->map);
+  //this->view.SetCenter(this->player.GetPosition());
 }
 
 void Game::Draw() {
-  this->window.Clear();
-  this->window.SetView(this->view);
+  this->window.Clear(sf::Color(0,0,0,255));
+  //this->window.SetView(this->view);
   
-  vector <sf::Sprite *>::iterator it = this->sprites.begin();
+  /*
+  vector <sf::Sprite>::iterator it = this->sprites.begin();
   while (it != this->sprites.end()) {
-    this->window.Draw(**it);
+    this->window.Draw(*it);
     ++it;
-  }
-
+  }*/
+  
+  this->map.Draw(this->window);
+  
   //cout << 1.f / this->window.GetFrameTime() << endl; // show fps
   this->window.Display();
 }
@@ -57,7 +59,8 @@ void Game::HandleEvents() {
             this->window.Close();
             break;
           case sf::Key::Space:
-            cout << "space" << endl;
+            this->player.Jump();
+            break;
           default:
             cout << this->event.Key.Code << endl;
             break;
@@ -73,19 +76,19 @@ void Game::HandleInput() {
   const sf::Input& input = this->window.GetInput();
   
   if (input.IsKeyDown(sf::Key::Up)) {
-    cout << "up" << endl;
+    
   }
   
   if (input.IsKeyDown(sf::Key::Down)) {
-    cout << "down" << endl;
+    
   }
   
   if (input.IsKeyDown(sf::Key::Right)) {
-    cout << "right" << endl;
+    this->player.ApplyForce(Vector2D(.3, 0));
   }
   
   if (input.IsKeyDown(sf::Key::Left)) {
-    cout << "left" << endl;
+    this->player.ApplyForce(Vector2D(-.3, 0));
   }
   
 }

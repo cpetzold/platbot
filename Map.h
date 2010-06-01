@@ -3,28 +3,36 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "json/reader.h"
+#include "json/writer.h"
+#include "json/elements.h"
+
+#include "Tile.h"
+#include "Resources.h"
+
 #include <string>
+#include <sstream>
+#include <fstream>
 #include <iostream>
 using namespace std;
 
-class Map : sf::Sprite {
+class Map {
 private:
-  sf::Image* image;
-  sf::Image mask;
-  sf::Image terrain;
+  sf::Image tileset;
+  int tilesize;
+  Vector2D dim;
+  vector<vector<Tile> > tiles;
   
+
 public:
   
   Map();
-  Map(sf::Image& mask, sf::Image& terrain);
+  Map(string filename, Resources &data);
   ~Map();
+
+  void Draw(sf::RenderWindow &window);
   
-  void SetMask(sf::Image& mask);
-  void SetTerrain(sf::Image& terrain);
   
-  sf::IntRect GetAABB();
-  
-  void Generate();
   
 };
 

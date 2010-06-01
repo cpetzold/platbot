@@ -1,16 +1,22 @@
 #include "Player.h"
 
+Player::Player() {
+  
+}
+
 Player::Player(sf::Image & img, sf::Image & mask, sf::Vector2f pos) : sf::Sprite(img, pos) {
-  this->SetCenter(img.GetWidth()/2, img.GetHeight()/2);
   this->mask = &mask;
+  this->SetCenter(img.GetWidth()/2, img.GetHeight()/2);
   
   this->pos.SetXY(this->GetPosition().x, this->GetPosition().y);
   
-  this->acc.y = 0.24;
-  this->vel.x = 2;
+  this->accd.y = 0.24;
+  this->acc.y = this->accd.y;
+  this->fric = 0.99;
   
-  this->off.x = 25;
-  this->off.y = 21;
+  
+  //this->vel.y = -30;
+  //this->vel.x = 5;
   
 }
 
@@ -23,55 +29,108 @@ void Player::Update(float t, Map & m) {
   if (this->vel.Magnitude() < 32.0) {
     this->vel += this->acc*t;
   }
+  
   this->prov = this->pos + this->vel*t + this->acc*(1.0/2.0)*(t*t);
   
   if (this->IsColliding(&m)) {
     this->HandleCollision();
   } else {
+    //this->acc.y = this->accd.y;
     this->pos = this->prov;
     this->SetPosition(this->pos.x, this->pos.y);
   }
+  
+  
+  this->acc.x = this->accd.x;
 
 }
 
 sf::IntRect Player::GetAABB(Vector2D pos) {
-  return sf::IntRect(pos.x + this->off.x,
-                     pos.y + this->off.y,
-                     pos.x + this->off.x + this->mask->GetWidth(),
-                     pos.y + this->off.y + this->mask->GetHeight());
+  return sf::IntRect(pos.x - (this->mask->GetWidth()/2),
+                     pos.y - (this->mask->GetHeight()/2),
+                     pos.x + (this->mask->GetWidth()/2),
+                     pos.y + (this->mask->GetHeight()/2));
+                    
+}
+
+void Player::ApplyForce(Vector2D f) {
+  this->acc += f;
+}
+
+void Player::Jump() {
+  this->vel.y = -4.46;
+  this->acc.y = this->accd.y;
 }
 
 bool Player::IsColliding(Map * m) {
-  sf::IntRect playerAABB = this->GetAABB(this->prov);
-  sf::IntRect mapAABB = m->GetAABB();
-  
-  if (playerAABB.Intersects(mapAABB)) {
-    
-    sf::Vector2f mapV;
-    int x = 0;
-    int y = 0;
-    
-    for (int i = playerAABB.Left; i < playerAABB.Right; i++) {
-      for (int j = playerAABB.Top; j < playerAABB.Bottom; j++) {
-        mapV = ((sf::Sprite *)m)->TransformToLocal(sf::Vector2f(i, j));
-                
-        //If both sprites have opaque pixels at the same point we've got a hit
-        if ((((sf::Sprite *)m)->GetPixel(mapV.x, mapV.y).a != sf::Color(0,0,0,0).a) &&
-            (this->mask->GetPixel(x, y).a != sf::Color(0,0,0,0).a)) {
-          return true;
-        }
-        
-        y++;
-      }
-      y = 0;
-      x++;
-    }
-    return false;
-  }
+
   return false;
 }
 
 
 void Player::HandleCollision() {
-  cout << "OH SHIT A COLLISION!" << endl;
+  int hh = this->mask->GetHeight()/2;
+  int displace = this->last.y - this->prov.y;
+  
+  if (displace > 0) {
+    this->acc.y = 0;
+  } else {
+    this->acc.y = this->accd.y;
+    hh = -hh;
+  }
+  
+  this->vel.y = 0;
+  this->vel.x = 0;
+  
+  this->pos.y = this->prov.y + (displace - hh);
+  this->SetPosition(this->pos.x, this->pos.y);
 }
+
+
+
+
+
+
+
+void Player::Debug(sf::RenderWindow & window) {
+  int width = this->GetImage()->GetWidth();
+  int height = this->GetImage()->GetHeight();
+  
+  sf::Shape spriteBox = sf::Shape::Rectangle(this->pos.x - width/2,
+                                             this->pos.y - height/2,
+                                             this->pos.x + width/2,
+                                             this->pos.y + height/2,
+                                             sf::Color(0, 255, 0, 100));
+  window.Draw(spriteBox);
+  
+  
+  sf::IntRect aabb = this->GetAABB(this->pos);
+  sf::Shape aabbBox = sf::Shape::Rectangle(aabb.Left,
+                                           aabb.Top,
+                                           aabb.Right,
+                                           aabb.Bottom,
+                                           sf::Color(0, 0, 255, 100));
+  window.Draw(aabbBox);
+  
+  
+  sf::IntRect proaabb = this->GetAABB(this->prov);
+  sf::Shape proaabbBox = sf::Shape::Rectangle(proaabb.Left,
+                                           proaabb.Top,
+                                           proaabb.Right,
+                                           proaabb.Bottom,
+                                           sf::Color(20, 100, 100, 100));
+  window.Draw(proaabbBox);
+  
+  sf::Shape lastPoint = sf::Shape::Circle(this->last.x, this->last.y, 1, sf::Color(0,255,255,150));
+  window.Draw(lastPoint);
+
+}
+
+
+
+
+
+
+
+
+

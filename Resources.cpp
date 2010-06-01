@@ -18,36 +18,36 @@ Resources::~Resources() {
 
 }
 
-sf::Image* Resources::GetImage(string path) {
+sf::Image& Resources::GetImage(string path) {
   path = this->dataPath + this->imagesPath + path;
-  map <string, sf::Image*>::iterator it = this->images.find(path);
+  map <string, sf::Image>::iterator it = this->images.find(path);
   if (it == this->images.end()) {
-    this->images[path] = new sf::Image();
-    this->images[path]->LoadFromFile(path.c_str());
+    this->images[path] = sf::Image();
+    this->images[path].LoadFromFile(path.c_str());
   }
   return this->images[path];
 }
 
-sf::SoundBuffer* Resources::GetSoundBuffer(string path) {
+sf::SoundBuffer& Resources::GetSoundBuffer(string path) {
   path = this->dataPath + this->soundBuffersPath + path;
-  map <string, sf::SoundBuffer*>::iterator it = this->soundBuffers.find(path);
+  map <string, sf::SoundBuffer>::iterator it = this->soundBuffers.find(path);
   if (it == this->soundBuffers.end()) {
-    this->soundBuffers[path] = new sf::SoundBuffer();
-    this->soundBuffers[path]->LoadFromFile(path.c_str());
+    this->soundBuffers[path] = sf::SoundBuffer();
+    this->soundBuffers[path].LoadFromFile(path.c_str());
   }
   return this->soundBuffers[path];
 }
 
-sf::Font* Resources::GetFont(string path, int charSize) {
+sf::Font& Resources::GetFont(string path, int charSize) {
   path = this->dataPath + this->fontsPath + path;
-  map <string, sf::Font*>::iterator it = this->fonts.find(path);
+  map <string, sf::Font>::iterator it = this->fonts.find(path);
   if (it == this->fonts.end()) {
-    this->fonts[path] = new sf::Font();
-    this->fonts[path]->LoadFromFile(path.c_str(), charSize);
+    this->fonts[path] = sf::Font();
+    this->fonts[path].LoadFromFile(path.c_str(), charSize);
   }
   return this->fonts[path];
 }
 
-sf::Font* Resources::GetFont(string path) {
+sf::Font& Resources::GetFont(string path) {
   return this->GetFont(path, 60);
 }

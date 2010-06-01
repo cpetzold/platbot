@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
+
 #include <string>
 #include <iostream>
 using namespace std;
@@ -12,13 +13,13 @@ class Resources {
 private:
   string dataPath;
   
-  map <string, sf::Image*> images; 
+  map <string, sf::Image> images; 
   string imagesPath;
   
-  map <string, sf::SoundBuffer*> soundBuffers;
+  map <string, sf::SoundBuffer> soundBuffers;
   string soundBuffersPath;
-  
-  map <string, sf::Font*> fonts;
+
+  map <string, sf::Font> fonts;
   string fontsPath;
   
 public:
@@ -27,10 +28,10 @@ public:
   Resources(string dataPath, string imagesPath, string soundBuffersPath, string fontsPath);
   ~Resources();
   
-  sf::Image* GetImage(string path);
-  sf::SoundBuffer* GetSoundBuffer(string path);
-  sf::Font* GetFont(string path, int charSize);
-  sf::Font* GetFont(string path);
+  sf::Image& GetImage(string path);
+  sf::SoundBuffer& GetSoundBuffer(string path);
+  sf::Font& GetFont(string path, int charSize);
+  sf::Font& GetFont(string path);
   
 };
 
