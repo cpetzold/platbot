@@ -5,17 +5,20 @@ Editor = function() {
     init: function() {
       var self = Editor;
       
+      self.moving = false;
+      self.drawing = false;
+      
       self.pos = [290, 15];
       self.last = [0, 0];
-      self.moving = false;
       self.canvassize = [16,16];
       
       self.tiledefs = [];
       self.tiles = new Array();
       
       self.tilesize = 32;
+      self.tilesetsrc = "grass.png";
       self.tileset = new Image();
-      self.tileset.src = "tilesets/grass.png";
+      self.tileset.src = "tilesets/"+self.tilesetsrc;
       self.offset = [0, 0];
       
       self.window = $(window);
@@ -30,8 +33,12 @@ Editor = function() {
         canvasheight_amt: $('#canvasheight_amt'),
         canvas: $('#canvas'),
         toolbar: $('#toolbar'),
+        drawtype: $('#drawtype'),
+        brush: $('#brush'),
         pencil: $('#pencil'),
-        eraser: $('#eraser')
+        eraser: $('#eraser'),
+        fill: $('#fill'),
+        single: $('#single')
       };
       
       self.canvas = self.el.canvas[0];
@@ -56,7 +63,7 @@ Editor = function() {
         change: function(e, ui) {
           self.el.canvaswidth_amt.text(ui.value);
           self.canvassize[0] = ui.value;
-          self.draw();
+          self.resize();
         }
       });
       self.el.canvaswidth_amt.text(self.el.canvaswidth.slider("value"));
@@ -69,12 +76,12 @@ Editor = function() {
         change: function(e, ui) {
           self.el.canvasheight_amt.text(ui.value);
           self.canvassize[1] = ui.value;
-          self.draw();
+          self.resize();
         }
       });
       self.el.canvasheight_amt.text(self.el.canvasheight.slider("value"));
       
-      self.el.toolbar.buttonset();
+      self.el.drawtype.buttonset();
       self.el.pencil.button("option", {
         icons: { primary: "ui-icon-pencil" },
         text: false
@@ -84,13 +91,13 @@ Editor = function() {
         text: false
       });
       
+      self.el.brush.buttonset();
+      
       self.initTileset();
       
       self.el.tileset.children().click(function() {
         $(this).addClass("selected").siblings().removeClass("selected");
-        
         self.offset = [parseInt($(this).attr("x")), parseInt($(this).attr("y"))];
-        console.log(self.offset);
       });
       self.el.tileset.children().first().addClass("selected");
       
@@ -119,8 +126,7 @@ Editor = function() {
       
       if (y < 0) y = 0;
       else if (y >= self.canvassize[1]) y = self.canvassize[1]-1;
-      
-      
+
       return [x, y];
     },
     
@@ -133,41 +139,58 @@ Editor = function() {
     
     mousemove: function(e) {
       var self = Editor;
-      
-      
-      
+
       if (self.moving) {        
-        self.pos[0] += e.clientX - self.last[0];
-        self.pos[1] += e.clientY - self.last[1];
-        self.last = [e.clientX, e.clientY];
+        self.pos[0] += e.pageX - self.last[0];
+        self.pos[1] += e.pageY - self.last[1];
+        self.last = [e.pageX, e.pageY];
         self.draw();
-      } else if (self.el.pencil.attr("checked")) {
-        var loc = self.coords([e.clientX, e.clientY]);
+      } else if (self.el.single.attr("checked") || self.el.fill.attr("checked")) {
+        var loc = self.coords([e.pageX, e.pageY]);
         
         self.draw();
-        self.drawTile(loc, self.offset);
+        
+        if (self.el.pencil.attr("checked")) {
+          self.drawTile(loc, self.offset);
+        }
+        
+        if (self.drawing) {
+          var offset = self.el.pencil.attr("checked") ? self.offset : undefined;
+          self.fillTile(offset, loc);
+        }
+        
       }
     },
     
     mousedown: function(e) {
       var self = Editor;
       
-      if (e.button == 0 && e.shiftKey) {
-        self.last = [e.clientX, e.clientY];
-        self.moving = true;
-        e.preventDefault();
-      } else if (self.el.pencil.attr("checked")) {
+      if (e.button == 0) {
         var loc = self.coords([e.clientX, e.clientY]);
-        self.tiles[loc[1]][loc[0]] = self.offset;
-        console.log(self.tiles);
+        if (e.shiftKey) {
+          self.last = [e.clientX, e.clientY];
+          self.moving = true;
+          e.preventDefault();
+        } else if (self.el.single.attr("checked")) {
+          var offset = self.el.pencil.attr("checked") ? self.offset : undefined;
+          self.fillTile(offset, loc);
+          self.drawing = true;
+        } else if (self.el.fill.attr("checked")) {
+          var offset = self.el.pencil.attr("checked") ? self.offset : undefined;
+          self.fill(offset, loc);
+        }
       }
+      
+      
     },
     
     mouseup: function(e) {
       var self = Editor;
       if (e.button == 0) {
         self.moving = false;
+        self.drawing = false;
       }
+      self.draw();
     },
     
     resize: function() {
@@ -179,7 +202,7 @@ Editor = function() {
       self.tiles.length = self.canvassize[1];
       
       for (var i = 0; i < self.tiles.length; i++) {
-        self.tiles[i] = new Array();
+        if (!self.tiles[i]) self.tiles[i] = new Array();
         self.tiles[i].length = self.canvassize[0];
       }
       
@@ -187,14 +210,93 @@ Editor = function() {
     },
     
     save: function() {
+      var self = Editor;
+      
+      var map = {
+        "name": $("#name").val(),
+        "author": $("#author").val(),
+        "url": $("#url").val(),
+        "version": $("#version").val(),
+        "tileset": {
+          "image": self.tilesetsrc,
+          "tilesize": self.tilesize
+        },
+        "tiledefs": [],
+        "tiles":[]
+      };
+      
+      
+      map.tiledefs[0] = { "solid": false };
+      
+      for (var i = 0; i < self.tiles.length; i++) {
+        map.tiles[i] = self.cloneObj(self.tiles[i]);
+      }
+      
+      
+      for (var i = 0; i < self.tiles.length; i++) {
+        for (var j = 0; j < self.tiles[i].length; j++) {
+          var tile = self.tiles[i][j];
+          
+          if (tile) {
+            
+            var found = false;
+            for (var k = 0; k < map.tiledefs.length; k++) {
+              if (map.tiledefs[k].offset && tile == map.tiledefs[k].offset) {
+                map.tiles[i][j] = k;
+                found = true;
+                break;
+              }
+            }
+            
+            if (!found) {
+              map.tiles[i][j] = map.tiledefs.length;
+              map.tiledefs[map.tiledefs.length] = { "offset": tile, "solid": true };
+            }
+            
+            
+          } else {
+            map.tiles[i][j] = 0;
+          }
+          
+        }
+      }
+      
+      //console.log(JSON.stringify(map));
+      window.location = "map.php?t="+JSON.stringify(map)+"&n="+map.name;
       
     },
     
     reset: function() {
+      var self = Editor;
       
     },
     
+    fillTile: function(o, loc) {
+      var self = Editor;
+      self.tiles[loc[1]][loc[0]] = o;
+    },
+    
+    fill: function(o, loc) {
+      var self = Editor;
+      var original = self.tiles[loc[1]][loc[0]];
+      
+      if (original == o) return;
+      
+      var s = new Array();
+      s.push(loc);
+      
+      while (s.length > 0) {
+        loc = s.pop();
+        if (original == self.tiles[loc[1]][loc[0]]) {
+          self.fillTile(o, loc);
 
+          if (loc[0]-1 >= 0) s.push([loc[0]-1, loc[1]]);
+          if (loc[0]+1 < self.canvassize[0]) s.push([loc[0]+1, loc[1]]);
+          if (loc[1]-1 >= 0) s.push([loc[0], loc[1]-1]);
+          if (loc[1]+1 < self.canvassize[1]) s.push([loc[0], loc[1]+1]);
+        }
+      }
+    },
     
     draw: function() {
       var self = Editor;
@@ -233,7 +335,17 @@ Editor = function() {
       }
       
       
+    },
+    
+    cloneObj: function(obj) {
+        if (null == obj || "object" != typeof obj) return obj;
+        var copy = obj.constructor();
+        for (var attr in obj) {
+            if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+        }
+        return copy;
     }
+    
     
     
     

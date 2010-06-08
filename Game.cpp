@@ -13,7 +13,7 @@ Game::~Game() {
 
 bool Game::Init() {
   
-  this->map = Map("test.map", this->data);
+  this->map = Map("test1.map", this->data);
   //this->player = Player(this->data.GetImage("player.png"), this->data.GetImage("player_mask.png"), sf::Vector2f(-400, -900));
   
   //this->sprites.push_back((sf::Sprite)this->player);

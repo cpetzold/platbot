@@ -31,11 +31,16 @@
 		}
 		
 		#canvas {
+			cursor: crosshair;
 			position: absolute;
 			top: 0;
 			left: 0;
 		}
 		
+		#canvas:select {
+			cursor: crosshair;
+		}
+				
 		.ui-dialog-titlebar-close{
 		    display: none;
 		}
@@ -78,7 +83,7 @@
 	</style>
 	
 </head>
-<body>
+<body onSelectStart="return false;">
 	
 	<canvas id="canvas"></canvas>
 	
@@ -91,8 +96,14 @@
 
 	<div id="inspector" title="Platbot Editor">
 		<div id="toolbar">
-			<input type="radio" id="pencil" name="radio" checked="checked" /><label for="pencil">Pencil</label>
-			<input type="radio" id="eraser" name="radio" /><label for="eraser">Eraser</label>
+			<div id="drawtype">
+				<input type="radio"	 id="pencil" name="drawtype" checked="checked" /><label for="pencil">Pencil</label>
+				<input type="radio" id="eraser" name="drawtype" /><label for="eraser">Eraser</label>
+			</div>
+			<div id="brush">
+				<input type="radio" id="single" name="brush" checked="checked" /><label for="single">Single</label>
+				<input type="radio" id="fill" name="brush" /><label for="fill">Fill</label>
+			</div>
 		</div>
 		
 		<ul>
@@ -136,6 +147,7 @@
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="jquery.center.js" type="text/javascript" charset="utf-8"></script>
 	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="json.js" type="text/javascript" charset="utf-8"></script>
 	<script src="editor.js" type="text/javascript" charset="utf-8"></script>
 </body>
 </html>

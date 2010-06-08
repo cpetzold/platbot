@@ -7,25 +7,32 @@ Map::Map() {
 Map::Map(string filename, Resources &data) {
   using namespace json;
 
+    cout << "." << endl;
+    
   filename = "data/maps/" + filename;
 
   string input;
 
   ifstream inFile;
   inFile.open(filename.c_str());
-  char buf[256];
+  char buf[2048];
   while (inFile.good()) {
-    inFile.getline(buf, 256);
+    inFile.getline(buf, 2048);
     input += buf;
   }
   inFile.close();
+    
+    cout << "." << endl;
 
   stringstream stream(input);
 
+    cout << "." << endl;
 
   Object root;
   Reader::Read(root, stream);
 
+    cout << "." << endl;
+    
   String name = root["name"];
   String author = root["author"];
   String url = root["url"];
@@ -33,6 +40,8 @@ Map::Map(string filename, Resources &data) {
   String tilesetFilename = root["tileset"]["image"];
   Number tileSizeNum = root["tileset"]["tilesize"];
   int tileSize = tileSizeNum.Value();
+    
+    cout << "." << endl;
 
   this->tilesize = tileSize;
   this->tileset = data.GetImage("tilesets/" + tilesetFilename.Value());
@@ -42,6 +51,8 @@ Map::Map(string filename, Resources &data) {
 
   vector<Tile> tileDefinitions;
 
+    cout << "." << endl;
+    
   Array::const_iterator itTiledefs(tiledefs.Begin()), itTiledefsEnd(tiledefs.End());
   for (; itTiledefs != itTiledefsEnd; ++itTiledefs) {
     
