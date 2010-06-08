@@ -6,27 +6,26 @@ Map::Map() {
 
 Map::Map(string filename, Resources &data) {
   using namespace json;
-  
+
   filename = "data/maps/" + filename;
-  
+
   string input;
 
   ifstream inFile;
   inFile.open(filename.c_str());
   char buf[256];
-  while (inFile.good()) { 
+  while (inFile.good()) {
     inFile.getline(buf, 256);
     input += buf;
   }
   inFile.close();
-  
-  cout << input << endl;
+
   stringstream stream(input);
-  
-  
+
+
   Object root;
   Reader::Read(root, stream);
-  
+
   String name = root["name"];
   String author = root["author"];
   String url = root["url"];
@@ -37,93 +36,85 @@ Map::Map(string filename, Resources &data) {
 
   this->tilesize = tileSize;
   this->tileset = data.GetImage("tilesets/" + tilesetFilename.Value());
-  
+
   Array tiledefs = root["tiledefs"];
   Array tiles = root["tiles"];
-  
-  cout << "Name: " << name.Value() << " " << version.Value() << endl;
-  cout << "Author: " << author.Value() << endl;
-  cout << "URL: " << url.Value() << endl;
-  
+
   vector<Tile> tileDefinitions;
-  
+
   Array::const_iterator itTiledefs(tiledefs.Begin()), itTiledefsEnd(tiledefs.End());
   for (; itTiledefs != itTiledefsEnd; ++itTiledefs) {
+
     Object def = *itTiledefs;
-    
+
     if (def.Find("offset") == def.End()) {
       tileDefinitions.push_back(Tile());
       continue;
     }
-    
+
     Number offX = def["offset"][0];
     Number offY = def["offset"][1];
     Boolean solid = def["solid"];
-    
-    Tile tile(this->tileset, solid.Value());
-    
+
+    Tile tile(*(this->tileset), solid.Value());
+
     int left = tileSize * offX.Value();
     int top = tileSize * offY.Value();
     int right = left + tileSize;
     int bottom = top + tileSize;
-    
-    cout << left << "," << top << "," <<right << "," << bottom << endl;
-    
+
     tile.SetSubRect(sf::IntRect(left, top, right, bottom));
-    
+
     tileDefinitions.push_back(tile);
   }
-  
-  
+
+
   int x = 0;
   int y = 0;
-  
+
   Array::const_iterator itTiles(tiles.Begin()), itTilesEnd(tiles.End());
   for (; itTiles != itTilesEnd; ++itTiles) {
     Array row = *itTiles;
     Array::const_iterator itRow(row.Begin()), itRowEnd(row.End());
-    
+
     vector<Tile> tileRow;
-    
+
     for (; itRow != itRowEnd; ++itRow) {
       Number tileRef = *itRow;
-      
+
       Tile tile(tileDefinitions[tileRef.Value()]);
-      
+
       tile.SetPosition(sf::Vector2f(x*tileSize, y*tileSize));
-      
-      
+
+
       tileRow.insert(tileRow.begin()+x, tile);
       x++;
     }
-    
+
     this->tiles.insert(this->tiles.begin()+y, tileRow);
     x = 0;
     y++;
   }
-  
-  
+
+
   this->dim = Vector2D(this->tiles[0].size(), this->tiles.size());
-  
-  cout << this->dim.x << endl;
-  
 }
 
 
 void Map::Draw(sf::RenderWindow &window) {
-  sf::Sprite test(this->tileset, sf::Vector2f(400,300));
-  test.SetSubRect(sf::IntRect(0,0,32,32));
-  window.Draw(test);
+
   for (int y = 0; y < this->dim.y; y++) {
     for (int x = 0; x < this->dim.x; x++) {
-      window.Draw(this->tiles[x][y]);
-      
+
+    if (this->tiles[y][x].IsVisible())
+        window.Draw(this->tiles[y][x]);
+
     }
   }
-  
+
 }
 
 
-Map::~Map() {
+//Map::~Map() {
   // clean up yo!
-}
+//}

@@ -17,7 +17,7 @@ class Dynamic : public Animatable{
         Vector2D acc;
 
     public:
-        Dynamic(const sf::Image& img, sf::Vector2f startPos, int fw, int fh, int ef=3, float sp=1.0, int st=0, float d=0.5, float m=1.f)
+        Dynamic(const sf::Image& img, sf::Vector2f startPos, int fw, int fh, int ef=3, float sp=1.0, int st=0, float d=0.9, float m=1.f)
         :Animatable(img, startPos, fw, fh, ef, sp, st), damping(d), mass(m){pos.x=startPos.x; pos.y=startPos.y;};
 
         Dynamic();
@@ -38,6 +38,9 @@ class Dynamic : public Animatable{
         void update(float time);
 
         void checkMapCollisions(const Map& map);
+        void handleCollision(const sf::Rect<float>& overlap);
+
+        sf::Rect<float> getAABB() const;
 
 
 };

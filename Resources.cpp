@@ -15,15 +15,17 @@ Resources::Resources(string dataPath, string imagesPath, string soundBuffersPath
 }
 
 Resources::~Resources() {
-
+    //for(map<string, sf::Image*>::iterator it = images.begin(); it<images.end(); it++)
+        //delete *it;
 }
 
-sf::Image& Resources::GetImage(string path) {
+sf::Image* Resources::GetImage(string path) {
   path = this->dataPath + this->imagesPath + path;
-  map <string, sf::Image>::iterator it = this->images.find(path);
+  map <string, sf::Image*>::iterator it = this->images.find(path);
   if (it == this->images.end()) {
-    this->images[path] = sf::Image();
-    this->images[path].LoadFromFile(path.c_str());
+    this->images[path] = new sf::Image();
+    (*this->images[path]).LoadFromFile(path.c_str());
+    (*this->images[path]).SetSmooth(false);
   }
   return this->images[path];
 }

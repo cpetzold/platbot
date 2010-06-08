@@ -12,13 +12,16 @@ using namespace std;
 class Tile : public sf::Sprite {
 private:
   bool solid;
-  
+  bool visible;
+
 public:
-  Tile() : sf::Sprite(), solid(false) {};
-  Tile(const sf::Image& img, bool sol) : sf::Sprite(img), solid(sol) {};
-  
-  bool IsSolid() { return this->solid; };
-  
+  Tile() : sf::Sprite(), solid(false), visible(false) {};
+  Tile(const sf::Image& img, bool sol) : sf::Sprite(img), solid(sol), visible(true) {};
+
+  bool IsSolid() const{ return this->solid; } ;
+  bool IsVisible() const { return this->visible; } ;
+  sf::Rect<float> getAABB() const;
+
 };
 
 #endif

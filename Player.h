@@ -1,47 +1,19 @@
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef PLAYER_H_INCLUDED
+#define PLAYER_H_INCLUDED
 
 #include <SFML/Graphics.hpp>
+#include "Dynamic.h"
 
-#include "Map.h"
-#include "Vector2D.h"
+class Player : public Dynamic{
+    public:
+        Player(const sf::Image& img, sf::Vector2f startPos, const sf::Input& in);
+        Player();
+        void update(float time);
+        void handleInput();
 
-#include <string>
-#include <iostream>
-using namespace std;
-
-class Player : public sf::Sprite {
-private:
-  Vector2D pos;
-  Vector2D vel;
-  Vector2D acc;
-  Vector2D accd;
-  Vector2D prov;
-  Vector2D last;
-  
-  int fric;
-  
-  sf::Image * mask;
-  Vector2D off;
-  
-public:
-  
-  Player();
-  Player(sf::Image & img, sf::Image & mask, sf::Vector2f pos = sf::Vector2f(100, 0));
-  ~Player();
-  
-  void Update(float t, Map & m);
-  
-  void Jump();
-  void ApplyForce(Vector2D f);
-  
-  sf::IntRect GetAABB(Vector2D pos);
-  
-  bool IsColliding(Map * m);
-  void HandleCollision();
-  
-  void Debug(sf::RenderWindow & window);
-  
+    private:
+        const sf::Input& input;
+        bool direction; //1 for left, 0 for right
+        bool canJump; //1 when on the ground, 0 otherwise
 };
-
-#endif
+#endif // PLAYER_H_INCLUDED
