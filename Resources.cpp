@@ -15,7 +15,8 @@ Resources::Resources(string dataPath, string imagesPath, string soundBuffersPath
 }
 
 Resources::~Resources() {
-
+    //for(map<string, sf::Image*>::iterator it = images.begin(); it<images.end(); it++)
+        //delete *it;
 }
 
 sf::Image* Resources::GetImage(string path) {

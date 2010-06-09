@@ -7,8 +7,6 @@ Map::Map() {
 Map::Map(string filename, Resources &data) {
   using namespace json;
 
-    cout << "." << endl;
-    
   filename = "data/maps/" + filename;
 
   string input;
@@ -21,18 +19,12 @@ Map::Map(string filename, Resources &data) {
     input += buf;
   }
   inFile.close();
-    
-    cout << "." << endl;
 
   stringstream stream(input);
-
-    cout << "." << endl;
 
   Object root;
   Reader::Read(root, stream);
 
-    cout << "." << endl;
-    
   String name = root["name"];
   String author = root["author"];
   String url = root["url"];
@@ -40,8 +32,6 @@ Map::Map(string filename, Resources &data) {
   String tilesetFilename = root["tileset"]["image"];
   Number tileSizeNum = root["tileset"]["tilesize"];
   int tileSize = tileSizeNum.Value();
-    
-    cout << "." << endl;
 
   this->tilesize = tileSize;
   this->tileset = data.GetImage("tilesets/" + tilesetFilename.Value());
@@ -50,23 +40,21 @@ Map::Map(string filename, Resources &data) {
   Array tiles = root["tiles"];
 
   vector<Tile> tileDefinitions;
-
-    cout << "." << endl;
-    
+ 
   Array::const_iterator itTiledefs(tiledefs.Begin()), itTiledefsEnd(tiledefs.End());
   for (; itTiledefs != itTiledefsEnd; ++itTiledefs) {
-    
+
     Object def = *itTiledefs;
 
     if (def.Find("offset") == def.End()) {
       tileDefinitions.push_back(Tile());
       continue;
     }
-    
+
     Number offX = def["offset"][0];
     Number offY = def["offset"][1];
     Boolean solid = def["solid"];
-    
+
     Tile tile(*(this->tileset), solid.Value());
 
     int left = tileSize * offX.Value();
@@ -116,8 +104,8 @@ void Map::Draw(sf::RenderWindow &window) {
 
   for (int y = 0; y < this->dim.y; y++) {
     for (int x = 0; x < this->dim.x; x++) {
-      
-      if (this->tiles[y][x].IsVisible())
+
+    if (this->tiles[y][x].IsVisible())
         window.Draw(this->tiles[y][x]);
 
     }
@@ -126,6 +114,6 @@ void Map::Draw(sf::RenderWindow &window) {
 }
 
 
-Map::~Map() {
+//Map::~Map() {
   // clean up yo!
-}
+//}

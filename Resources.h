@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
+#include <map>
 #include <memory>
 #include <string>
 #include <iostream>

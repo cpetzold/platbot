@@ -13,14 +13,15 @@ class Tile : public sf::Sprite {
 private:
   bool solid;
   bool visible;
-  
+
 public:
   Tile() : sf::Sprite(), solid(false), visible(false) {};
   Tile(const sf::Image& img, bool sol) : sf::Sprite(img), solid(sol), visible(true) {};
-  
-  bool IsSolid() { return this->solid; };
-  bool IsVisible() { return this->visible; };
-  
+
+  bool IsSolid() const{ return this->solid; } ;
+  bool IsVisible() const { return this->visible; } ;
+  sf::Rect<float> getAABB() const;
+
 };
 
 #endif

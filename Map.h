@@ -28,11 +28,13 @@ public:
 
   Map();
   Map(string filename, Resources &data);
-  ~Map();
-
+  //~Map();
+  const Tile& at(int x, int y) const{
+      return tiles.at(y).at(x);
+      } ;
   void Draw(sf::RenderWindow &window);
 
-
+  int getTileSize() const{return tilesize;};
 
 };
 

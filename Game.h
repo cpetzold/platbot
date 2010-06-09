@@ -12,6 +12,7 @@ using namespace std;
 #include "Resources.h"
 #include "Player.h"
 #include "Map.h"
+#include "ObjectManager.h"
 
 class Game {
 private:
@@ -20,23 +21,26 @@ private:
   sf::View              view;
   sf::RenderWindow      window;
   int                   fps;
-  
+
   vector <sf::Sprite>   sprites;
   Resources             data;
-  Player                player;
+  Player*               player;
+  //ObjectManager      collisionMgr;
   Map                   map;
-  
+
 public:
-  
+
   Game(string title, sf::VideoMode videomode = sf::VideoMode(800,600,32), unsigned long style = sf::Style::Close, int fps = 50);
   ~Game();
-  
+
   bool Init();
   void HandleEvents();
   void HandleInput();
   void Draw();
   void Update();
   void Run();
+
+  void applyGravity(float grav);
 };
 
 #endif
