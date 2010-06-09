@@ -4,6 +4,7 @@ Game::Game(string title, sf::VideoMode videomode, unsigned long style, int fps) 
   this->window.Create(videomode, title.c_str(), style);
   this->window.SetFramerateLimit(fps);
   this->view = this->window.GetDefaultView();
+  this->window.SetView(this->view);
   this->fps = fps;
 }
 
@@ -34,9 +35,6 @@ void Game::Update() {
 
 
   this->view.SetCenter(this->player->GetPosition());
-  this->window.SetView(this->view);
-
-
 }
 
 void Game::Draw() {
@@ -114,7 +112,7 @@ void Game::HandleInput() {
 void Game::Run() {
   while(this->window.IsOpened()) {
     this->HandleEvents();
-    this->HandleInput();
+    //this->HandleInput();
 
     this->Update();
     this->Draw();

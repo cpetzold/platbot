@@ -168,7 +168,7 @@ sf::Rect<float> Dynamic::getAABB() const{
     float hh = (this->GetSize().y / 2);  //half height
      */
     float hw = 6;
-    float hh = 9;
+    float hh = 7;
     l = this->GetPosition().x-hw;
     r = this->GetPosition().x+hw;
     t = this->GetPosition().y-hh;
