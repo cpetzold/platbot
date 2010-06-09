@@ -27,7 +27,7 @@ class Dynamic : public Animatable{
         Vector2D getVelocity(){return vel;};
         Vector2D getAcceleration(){return acc;};
 
-        void setPosition(Vector2D newPos){pos = newPos;};
+        void setPosition(Vector2D newPos){pos = newPos; SetX(pos.x); SetY(pos.y);};
         void setAcceleration(Vector2D newAcc){acc = newAcc;};
         void setVelocity(Vector2D newVel){vel = newVel;};
 
@@ -42,6 +42,7 @@ class Dynamic : public Animatable{
 
         sf::Rect<float> getAABB() const;
 
+        bool onGround;
 
 };
 

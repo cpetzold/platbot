@@ -4,7 +4,7 @@ Game::Game(string title, sf::VideoMode videomode, unsigned long style, int fps) 
   this->window.Create(videomode, title.c_str(), style);
   this->window.SetFramerateLimit(fps);
 
-  this->player = new Player(*this->data.GetImage("player.png"), sf::Vector2f(32,-32), this->window.GetInput());
+  this->player = new Player(*this->data.GetImage("player.png"), sf::Vector2f(0,-32), this->window.GetInput());
   this->player->SetScale(2,2);
 
 
@@ -33,7 +33,7 @@ void Game::Update() {
   float t = this->clock.GetElapsedTime();
   this->clock.Reset();
 
-  this->applyGravity(2000.f);
+  this->applyGravity(1500.f);
 
   this->player->update(t);
   this->player->checkMapCollisions(this->map);

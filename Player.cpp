@@ -68,10 +68,11 @@ void Player::handleInput(){
 
     //jump!
     if(input.IsKeyDown(sf::Key::Space)){
-        if(canJump){
+        if(onGround){
             cout << "JUMP";
-            canJump = 0;
+            onGround = 0;
             setVelocity(getVelocity().x, -500);
+            frameState = 2;
         }
     }
 
