@@ -12,7 +12,9 @@ void Dynamic::setPosition(float x, float y){
     pos.x = x;
     pos.y = y;
     SetX(pos.x);
-     SetY(pos.y);
+    SetY(pos.y);
+    this->getShadow()->SetX(pos.x);
+    this->getShadow()->SetY(pos.y);
 }
 
 //Set the acceleration of the object
@@ -43,6 +45,8 @@ void Dynamic::update(float time){
 
     this->Animatable::SetX(pos.x);
     this->Animatable::SetY(pos.y);
+    this->getShadow()->SetX(pos.x);
+    this->getShadow()->SetY(pos.y);
 
     this->Animatable::update(time);
 }
@@ -75,7 +79,6 @@ void Dynamic::checkMapCollisions(const Map& map){
 
         }
     }
-
 }
 
 void Dynamic::handleCollision(const sf::Rect<float>& overlap){
@@ -160,8 +163,12 @@ void Dynamic::handleCollision(const sf::Rect<float>& overlap){
 
 sf::Rect<float> Dynamic::getAABB() const{
     float l, t, r, b;
-    float hw = this->GetSize().x / 2;  //half width
-    float hh = this->GetSize().y / 2;  //half height
+    /*
+    float hw = (this->GetSize().x / 2);  //half width
+    float hh = (this->GetSize().y / 2);  //half height
+     */
+    float hw = 6;
+    float hh = 9;
     l = this->GetPosition().x-hw;
     r = this->GetPosition().x+hw;
     t = this->GetPosition().y-hh;
