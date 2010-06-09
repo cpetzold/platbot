@@ -11,6 +11,8 @@ Dynamic::~Dynamic(){
 void Dynamic::setPosition(float x, float y){
     pos.x = x;
     pos.y = y;
+    SetX(pos.x);
+     SetY(pos.y);
 }
 
 //Set the acceleration of the object
@@ -80,44 +82,77 @@ void Dynamic::handleCollision(const sf::Rect<float>& overlap){
 
     sf::Rect<float> currentRect = this->getAABB();
 
-    cout << overlap.Bottom << " " <<currentRect.Bottom << endl;
+    float offsetY = overlap.GetHeight();
+    float offsetX = overlap.GetWidth();
 
+    if(this->getPosition().y < overlap.Top){
+        this->setPosition(this->getPosition().x, this->getPosition().y-offsetY);
+        onGround = true;
+    }
+    else if(this->getPosition().y > overlap.Bottom)
+        this->setPosition(this->getPosition().x, this->getPosition().y+offsetY);
+
+    //Horizontal detection
+    else if(this->getPosition().x < overlap.Right)
+        this->setPosition(this->getPosition().x-offsetX, this->getPosition().y);
+    else if(this->getPosition().x > overlap.Left)
+        this->setPosition(this->getPosition().x+offsetX, this->getPosition().y);
+
+    /*
     //Object coming from top, ie colliding with ground
     if(currentRect.Bottom == overlap.Bottom){
         float y = overlap.Top-16;
-        cout << y << endl;
+        //cout << "BOTTOM" << endl;
 
-        if(overlap.GetWidth() > overlap.GetHeight())
+        if(currentRect.Top != overlap.Top){
+            cout << "FIXED TOP" <<endl;
             this->setPosition(this->getPosition().x, y);
+
+            this->setPosition(this->getPosition().x, y);
+            this->setVelocity(this->getVelocity().x, 0);
+            this->setAcceleration(this->getAcceleration().x, 0);
+        }
     }
     //Object coming from bottom, ie hitting the ceiling
     else if(currentRect.Top == overlap.Top){
         float y = overlap.Bottom+16;
-        cout << y << endl;
+        //cout << "TOP" << endl;
 
-        if(overlap.GetWidth() > overlap.GetHeight())
+        if(currentRect.Bottom != overlap.Bottom){
             this->setPosition(this->getPosition().x, y);
+
+            this->setPosition(this->getPosition().x, y);
+            this->setVelocity(this->getVelocity().x, 0);
+            this->setAcceleration(this->getAcceleration().x, 0);
+        }
     }
 
     //Object hitting a wall to the left
     if(currentRect.Left == overlap.Left){
         float x = overlap.Right+16;
-        cout << x << endl;
+        //cout << "LEFT: " << currentRect.Right << ", " << overlap.Right << endl;
 
-        if(overlap.GetWidth() < overlap.GetHeight())
+        if(currentRect.Right != overlap.Right){
+            cout << "FIXED LEFT" << endl;
             this->setPosition(x, this->getPosition().y);
+            this->setVelocity(0, this->getVelocity().y);
+            this->setAcceleration(x, this->getAcceleration().y);
+        }
     }
     //Object hitting a wall to the right
     else if(currentRect.Right == overlap.Right){
         float x = overlap.Left-16;
-        cout << x << endl;
+        //cout << "RIGHT" << endl;
 
-        if(overlap.GetWidth() < overlap.GetHeight())
-            this->setPosition(x, this->getPosition().x);
+        if(currentRect.Left != overlap.Left){
+            cout << "FIXED RIGHT" << endl;
+            this->setPosition(x, this->getPosition().y);
+            this->setVelocity(0, this->getVelocity().y);
+            this->setAcceleration(x, this->getAcceleration().y);
+        }
     }
 
-    this->setVelocity(this->getVelocity().x, 0);
-    this->setAcceleration(this->getAcceleration().x, 0);
+    */
 
 
 
