@@ -22,6 +22,7 @@ private:
   int tilesize;
   Vector2D dim;
   vector<vector<Tile> > tiles;
+  vector<sf::Shape> shadows;
 
 
 public:
@@ -33,6 +34,7 @@ public:
       return tiles.at(y).at(x);
     } ;
   void Draw(sf::RenderWindow &window);
+  void DrawShadows(sf::RenderWindow &window);
 
   int getTileSize() const{return tilesize;};
   int getWidth() const {return dim.x;};

@@ -3,12 +3,8 @@
 Game::Game(string title, sf::VideoMode videomode, unsigned long style, int fps) {
   this->window.Create(videomode, title.c_str(), style);
   this->window.SetFramerateLimit(fps);
-
-  this->player = new Player(*this->data.GetImage("player.png"), sf::Vector2f(0,-64), this->window.GetInput());
-  this->player->SetScale(2,2);
-
-
-  this->view = window.GetDefaultView();
+  this->view = this->window.GetDefaultView();
+  this->window.SetView(this->view);
   this->fps = fps;
 }
 
@@ -18,13 +14,12 @@ Game::~Game() {
 
 bool Game::Init() {
 
-  this->map = Map("test.map", this->data);
+  this->map = Map("coolmap.map", this->data);
+  this->player = new Player(*this->data.GetImage("player.png"), sf::Vector2f(0,0), this->window.GetInput());
+  this->player->setShadow(*this->data.GetShadow("player.png"));
+  
   //this->collisionMgr(CollisionManager(map));
   //collisionMgr.addObject(player);
-  //this->player = Player(this->data.GetImage("player.png"), this->data.GetImage("player_mask.png"), sf::Vector2f(-400, -900));
-
-  //this->sprites.push_back((sf::Sprite)this->player);
-
   return true;
 }
 
@@ -39,13 +34,10 @@ void Game::Update() {
 
 
   this->view.SetCenter(this->player->GetPosition());
-  this->window.SetView(this->view);
-
-
 }
 
 void Game::Draw() {
-  this->window.Clear(sf::Color(0,0,0,255));
+  this->window.Clear(sf::Color(255,255,255,255));
   //this->window.SetView(this->view);
 
   /*
@@ -54,10 +46,17 @@ void Game::Draw() {
     this->window.Draw(*it);
     ++it;
   }*/
+  
+  this->window.Draw(*this->player->getShadow());
+  this->map.DrawShadows(this->window);
+  
+  
+  this->map.Draw(this->window);
 
   this->window.Draw(*this->player);
+  
 
-  this->map.Draw(this->window);
+ 
 
   //cout << 1.f / this->window.GetFrameTime() << endl; // show fps
   this->window.Display();

@@ -2,7 +2,7 @@
 
 int main() {
   
-  Game game("Ropebot");
+  Game game("Platbot");
   game.Init();
   game.Run();
   

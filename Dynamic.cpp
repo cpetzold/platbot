@@ -12,7 +12,9 @@ void Dynamic::setPosition(float x, float y){
     pos.x = x;
     pos.y = y;
     SetX(pos.x);
-     SetY(pos.y);
+    SetY(pos.y);
+    this->getShadow()->SetX(pos.x);
+    this->getShadow()->SetY(pos.y);
 }
 
 //Set the acceleration of the object
@@ -48,6 +50,8 @@ void Dynamic::update(float time, const Map& map){
 
     this->Animatable::SetX(pos.x);
     this->Animatable::SetY(pos.y);
+    this->getShadow()->SetX(pos.x);
+    this->getShadow()->SetY(pos.y);
 
     this->Animatable::update(time);
 }
@@ -81,7 +85,6 @@ void Dynamic::mapCollideX(const Map& map){
                 //cout << "OUT O' BOUNDSz" << endl;
             }
         }
-
 }
 
 void Dynamic::mapCollideY(const Map& map){
