@@ -4,7 +4,7 @@ Game::Game(string title, sf::VideoMode videomode, unsigned long style, int fps) 
   this->window.Create(videomode, title.c_str(), style);
   this->window.SetFramerateLimit(fps);
 
-  this->player = new Player(*this->data.GetImage("player.png"), sf::Vector2f(0,-32), this->window.GetInput());
+  this->player = new Player(*this->data.GetImage("player.png"), sf::Vector2f(0,-64), this->window.GetInput());
   this->player->SetScale(2,2);
 
 
@@ -18,13 +18,12 @@ Game::~Game() {
 
 bool Game::Init() {
 
-  this->map = Map("coolmap.map", this->data);
+  this->map = Map("test.map", this->data);
   //this->collisionMgr(CollisionManager(map));
   //collisionMgr.addObject(player);
   //this->player = Player(this->data.GetImage("player.png"), this->data.GetImage("player_mask.png"), sf::Vector2f(-400, -900));
 
   //this->sprites.push_back((sf::Sprite)this->player);
-
 
   return true;
 }
@@ -35,8 +34,8 @@ void Game::Update() {
 
   this->applyGravity(1500.f);
 
-  this->player->update(t);
-  this->player->checkMapCollisions(this->map);
+  this->player->update(t, this->map);
+  //this->player->checkMapCollisions(this->map);
 
 
   this->view.SetCenter(this->player->GetPosition());

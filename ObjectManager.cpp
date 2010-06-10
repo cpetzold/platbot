@@ -25,7 +25,7 @@ void ObjectManager::checkCollisions(){
                     if(toCheck.IsSolid()){
 
                         if(toCheck.getAABB().Intersects(currentObj->getAABB(), &overlap)){
-                            currentObj->handleCollision(overlap);
+                            //currentObj->handleCollision(overlap, j, i);
                         }
                     }
                 }

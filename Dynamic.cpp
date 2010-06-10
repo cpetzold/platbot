@@ -27,15 +27,20 @@ void Dynamic::setVelocity(float x, float y){
     vel.y = y;
 }
 
-void Dynamic::update(float time){
+void Dynamic::update(float time, const Map& map){
 
-    vel*=damping;
+    vel-= vel*damping * time;
 
     vel+=acc*time;
 
-//    cout << (acc*time).x << endl;
+    Vector2D oldPos = pos;
 
-    pos+=vel*time;
+    pos.y+=vel.y*time;
+    mapCollideY(map);
+
+    pos.x+=vel.x*time;
+    mapCollideX(map);
+
 
 //    cout << "Velocity:(" << vel.x << "," << vel.y << ")";
 //    cout << "Acceleration:(" << acc.x << "," << acc.y << ")";
@@ -47,114 +52,90 @@ void Dynamic::update(float time){
     this->Animatable::update(time);
 }
 
-void Dynamic::checkMapCollisions(const Map& map){
-    int x = pos.x/32;  //32 is current tilesize
-    int y = pos.y/32;
+void Dynamic::mapCollideX(const Map& map){
+    int xPos = pos.x/32+.5;  //32 is current tilesize
+    int yPos = pos.y/32+.5;
 
-    x--;
-    y--;
+    //cout << xPos << " " << yPos << endl;
 
     sf::Rect<float> overlap;
-    //cout << x << " " << y;
 
-    for(int i=0; i<3; i++){
-        for(int j=0; j<3; j++){
+    int x = (this->getVelocity().x>0 ? 1 : -1);
+        for(int i=-1; i<2; i++){
             try{
-                const Tile& toCheck = map.at(x+j, y+i);
+                //checks the 3 tiles to the right or left, dependingo n velocity
+
+                //cout<< "Checking tile at (" << xPos+x << "," << yPos+i << ")" << endl;
+
+                const Tile& toCheck = map.at(xPos+x, yPos+i);
 
                 if(toCheck.IsSolid()){
-
                     if(toCheck.getAABB().Intersects(this->getAABB(), &overlap)){
-                        handleCollision(overlap);
+                        collideX(overlap);
+                        //cout << "X Tile collision at: " << " :" << xPos+x << " " << yPos+i << endl;
                     }
+
                 }
             }
             catch(exception e){
                 //cout << "OUT O' BOUNDSz" << endl;
             }
+        }
 
+}
+
+void Dynamic::mapCollideY(const Map& map){
+    int xPos = pos.x/32+.5;  //32 is current tilesize
+    int yPos = pos.y/32+.5;
+
+    //cout << x << " " << y;
+
+    sf::Rect<float> overlap;
+
+    int y = (this->getVelocity().y>0 ? 1 : -1);
+
+    for(int i=-1; i<2; i++){
+        try{
+            //checks the 3 tiles to the right or left, dependingo n velocity
+            const Tile& toCheck = map.at(xPos+i, yPos+y);
+
+            if(toCheck.IsSolid()){
+                if(toCheck.getAABB().Intersects(this->getAABB(), &overlap)){
+                    collideY(overlap);
+                    //cout << "Y Tile collision at: " << xPos+i << " " << yPos+y << endl;
+                }
+            }
+        }
+        catch(exception e){
+            //cout << "OUT O' BOUNDSz" << endl;
         }
     }
 
 }
 
-void Dynamic::handleCollision(const sf::Rect<float>& overlap){
+void Dynamic::collideX(const sf::Rect<float>& overlap){
 
-    sf::Rect<float> currentRect = this->getAABB();
+    float offset = (this->getPosition().x < overlap.Right) ? -overlap.GetWidth() : overlap.GetWidth();
+    if(offset > 0)cout << offset << endl;
+    float fixedX = this->getPosition().x + offset;
 
-    float offsetY = overlap.GetHeight();
-    float offsetX = overlap.GetWidth();
+    this->setPosition(fixedX, this->getPosition().y);
+    this->setVelocity(0,this->getVelocity().y);
 
-    if(this->getPosition().y < overlap.Top){
-        this->setPosition(this->getPosition().x, this->getPosition().y-offsetY);
-        onGround = true;
-    }
-    else if(this->getPosition().y > overlap.Bottom)
-        this->setPosition(this->getPosition().x, this->getPosition().y+offsetY);
+}
 
-    //Horizontal detection
-    else if(this->getPosition().x < overlap.Right)
-        this->setPosition(this->getPosition().x-offsetX, this->getPosition().y);
-    else if(this->getPosition().x > overlap.Left)
-        this->setPosition(this->getPosition().x+offsetX, this->getPosition().y);
+void Dynamic::collideY(const sf::Rect<float>& overlap){
 
-    /*
-    //Object coming from top, ie colliding with ground
-    if(currentRect.Bottom == overlap.Bottom){
-        float y = overlap.Top-16;
-        //cout << "BOTTOM" << endl;
+    float offset = (this->getPosition().y < overlap.Top) ? -overlap.GetHeight() : overlap.GetHeight();
 
-        if(currentRect.Top != overlap.Top){
-            cout << "FIXED TOP" <<endl;
-            this->setPosition(this->getPosition().x, y);
-
-            this->setPosition(this->getPosition().x, y);
-            this->setVelocity(this->getVelocity().x, 0);
-            this->setAcceleration(this->getAcceleration().x, 0);
-        }
-    }
-    //Object coming from bottom, ie hitting the ceiling
-    else if(currentRect.Top == overlap.Top){
-        float y = overlap.Bottom+16;
-        //cout << "TOP" << endl;
-
-        if(currentRect.Bottom != overlap.Bottom){
-            this->setPosition(this->getPosition().x, y);
-
-            this->setPosition(this->getPosition().x, y);
-            this->setVelocity(this->getVelocity().x, 0);
-            this->setAcceleration(this->getAcceleration().x, 0);
-        }
+    if(offset < 0){
+        onGround = 1;
     }
 
-    //Object hitting a wall to the left
-    if(currentRect.Left == overlap.Left){
-        float x = overlap.Right+16;
-        //cout << "LEFT: " << currentRect.Right << ", " << overlap.Right << endl;
+    float fixedY = this->getPosition().y + offset;
 
-        if(currentRect.Right != overlap.Right){
-            cout << "FIXED LEFT" << endl;
-            this->setPosition(x, this->getPosition().y);
-            this->setVelocity(0, this->getVelocity().y);
-            this->setAcceleration(x, this->getAcceleration().y);
-        }
-    }
-    //Object hitting a wall to the right
-    else if(currentRect.Right == overlap.Right){
-        float x = overlap.Left-16;
-        //cout << "RIGHT" << endl;
-
-        if(currentRect.Left != overlap.Left){
-            cout << "FIXED RIGHT" << endl;
-            this->setPosition(x, this->getPosition().y);
-            this->setVelocity(0, this->getVelocity().y);
-            this->setAcceleration(x, this->getAcceleration().y);
-        }
-    }
-
-    */
-
-
+    this->setPosition(this->getPosition().x, fixedY);
+    this->setVelocity(this->getVelocity().x, 0);
 
 }
 
@@ -162,10 +143,10 @@ sf::Rect<float> Dynamic::getAABB() const{
     float l, t, r, b;
     float hw = this->GetSize().x / 2;  //half width
     float hh = this->GetSize().y / 2;  //half height
-    l = this->GetPosition().x-hw;
-    r = this->GetPosition().x+hw;
-    t = this->GetPosition().y-hh;
-    b = this->GetPosition().y+hh;
+    l = this->getPosition().x-hw;
+    r = this->getPosition().x+hw;
+    t = this->getPosition().y-hh;
+    b = this->getPosition().y+hh;
 
     //cout << "Top: " << t << " Bottom: " << b << endl;
     //cout << "Left: " << l << " Right: " << r << endl;

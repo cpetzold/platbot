@@ -31,10 +31,12 @@ public:
   //~Map();
   const Tile& at(int x, int y) const{
       return tiles.at(y).at(x);
-      } ;
+    } ;
   void Draw(sf::RenderWindow &window);
 
   int getTileSize() const{return tilesize;};
+  int getWidth() const {return dim.x;};
+  int getHeight() const {return dim.y;};
 
 };
 

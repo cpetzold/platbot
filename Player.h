@@ -8,7 +8,7 @@ class Player : public Dynamic{
     public:
         Player(const sf::Image& img, sf::Vector2f startPos, const sf::Input& in);
         Player();
-        void update(float time);
+        void update(float time, const Map& map);
         void handleInput();
 
     private:

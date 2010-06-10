@@ -7,8 +7,8 @@
 
 class Dynamic : public Animatable{
     private:
-        float mass;
         float damping;
+        float mass;
 
         Vector2D force;
 
@@ -18,14 +18,14 @@ class Dynamic : public Animatable{
 
     public:
         Dynamic(const sf::Image& img, sf::Vector2f startPos, int fw, int fh, int ef=3, float sp=1.0, int st=0, float d=0.9, float m=1.f)
-        :Animatable(img, startPos, fw, fh, ef, sp, st), damping(d), mass(m){pos.x=startPos.x; pos.y=startPos.y;};
+        :Animatable(img, startPos, fw, fh, ef, sp, st), damping(d), mass(m){pos.x=startPos.x; pos.y=startPos.y; SetX(pos.x); SetY(pos.y);};
 
         Dynamic();
         ~Dynamic();
 
-        Vector2D getPosition(){return pos;};
-        Vector2D getVelocity(){return vel;};
-        Vector2D getAcceleration(){return acc;};
+        Vector2D getPosition() const {return pos;};
+        Vector2D getVelocity() const {return vel;};
+        Vector2D getAcceleration() const {return acc;};
 
         void setPosition(Vector2D newPos){pos = newPos; SetX(pos.x); SetY(pos.y);};
         void setAcceleration(Vector2D newAcc){acc = newAcc;};
@@ -35,10 +35,13 @@ class Dynamic : public Animatable{
         void setAcceleration(float x, float y);
         void setVelocity(float x, float y);
 
-        void update(float time);
+        void update(float time, const Map& map);
 
-        void checkMapCollisions(const Map& map);
-        void handleCollision(const sf::Rect<float>& overlap);
+        void mapCollideX(const Map& map);
+        void mapCollideY(const Map& map);
+
+        void collideX(const sf::Rect<float>& overlap);
+        void collideY(const sf::Rect<float>& overlap);
 
         sf::Rect<float> getAABB() const;
 

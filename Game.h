@@ -12,7 +12,7 @@ using namespace std;
 #include "Resources.h"
 #include "Player.h"
 #include "Map.h"
-#include "ObjectManager.h"
+
 
 class Game {
 private:

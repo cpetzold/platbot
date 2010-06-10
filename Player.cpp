@@ -22,14 +22,16 @@ time is usually given by a Clock variable, giving us the time in seconds since t
 
 TODO:  Make a "dynamic" class
 -----------------------------------------*/
-void Player::update(float time){
-    this->Dynamic::update(time);
+void Player::update(float time, const Map& map){
+    this->Dynamic::update(time, map);
     //cout << this->getVelocity().x << ", " <<this->getVelocity().y << endl;
     //cout << this->frameSpeed;
     //this->FlipX(!direction);
 
     handleInput();
 
+
+    cout << this->getVelocity().x << endl;
 }
 
 /*-----------------------------------------
@@ -43,6 +45,8 @@ void Player::handleInput(){
     float accY = getAcceleration().y;
     float accX = getAcceleration().x;
 
+    float maxSpeed = 200;
+    if(input.IsKeyDown(sf::Key::X))maxSpeed=500;
     //left+right movement stuff
     if(left&&right){
         setAcceleration(0,accY);
@@ -52,12 +56,18 @@ void Player::handleInput(){
         FlipX(left);
         if(left){
             frameState = 1;
-            setAcceleration(-1000,accY);
+            if(fabs(this->getVelocity().x) < maxSpeed)
+                setAcceleration(-500,accY);
+            else
+                setAcceleration(0, accY);
         }
         else if(right) {
             direction = 0;
             frameState = 1;
-            setAcceleration(1000,accY);
+            if(fabs(this->getVelocity().x) < maxSpeed)
+                setAcceleration(500,accY);
+            else
+                setAcceleration(0, accY);
         }
 
     }
@@ -72,7 +82,7 @@ void Player::handleInput(){
             cout << "JUMP";
             onGround = 0;
             setVelocity(getVelocity().x, -500);
-            frameState = 2;
+            //frameState = 2;
         }
     }
 
