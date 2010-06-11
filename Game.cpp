@@ -14,10 +14,10 @@ Game::~Game() {
 
 bool Game::Init() {
 
-  this->map = Map("coolmap.map", this->data);
+  this->map = Map("test.map", this->data);
   this->player = new Player(*this->data.GetImage("player.png"), sf::Vector2f(0,0), this->window.GetInput());
   this->player->setShadow(*this->data.GetShadow("player.png"));
-  
+
   //this->collisionMgr(CollisionManager(map));
   //collisionMgr.addObject(player);
   return true;
@@ -46,17 +46,17 @@ void Game::Draw() {
     this->window.Draw(*it);
     ++it;
   }*/
-  
+
   this->window.Draw(*this->player->getShadow());
   this->map.DrawShadows(this->window);
-  
-  
+
+
   this->map.Draw(this->window);
 
   this->window.Draw(*this->player);
-  
 
- 
+
+
 
   //cout << 1.f / this->window.GetFrameTime() << endl; // show fps
   this->window.Display();

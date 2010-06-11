@@ -15,5 +15,10 @@ class Player : public Dynamic{
         const sf::Input& input;
         bool direction; //1 for left, 0 for right
         bool canJump; //1 when on the ground, 0 otherwise
+
+        float walkSpeed;
+        float runSpeed;
+        float jumpSpeed;
+
 };
 #endif // PLAYER_H_INCLUDED

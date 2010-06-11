@@ -13,6 +13,11 @@ Player::Player(const sf::Image& img, sf::Vector2f startPos, const sf::Input& in)
     setAcceleration(Vector2D(0,0));
     frameSpeed = 10;
     this->direction = 1;
+
+    this->walkSpeed = 300;
+    this->runSpeed = 500;
+    this->jumpSpeed = -700;
+
 }
 
 /*-----------------------------------------
@@ -43,15 +48,16 @@ void Player::handleInput(){
     float accY = getAcceleration().y;
     float accX = getAcceleration().x;
 
-    float maxSpeed = 200;
-    if(input.IsKeyDown(sf::Key::X))maxSpeed=500;
+    float maxSpeed = this->walkSpeed;
+
+    if(input.IsKeyDown(sf::Key::X))maxSpeed=this->runSpeed;
     //left+right movement stuff
     if (left && right){
         setAcceleration(0, accY);
         frameState = 0;
     } else if(left || right) {
         FlipX(left);
-        
+
         if (left) {
             frameState = 1;
             if(fabs(this->getVelocity().x) < maxSpeed)
