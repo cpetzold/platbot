@@ -77,7 +77,7 @@ void Player::handleInput(){
     if(input.IsKeyDown(sf::Key::Space)){
         if(onGround){
             onGround = 0;
-            setVelocity(getVelocity().x, -500);
+            setVelocity(getVelocity().x, -800);
             //frameState = 2;
         }
     }

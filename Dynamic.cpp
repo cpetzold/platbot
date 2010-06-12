@@ -144,8 +144,13 @@ void Dynamic::collideY(const sf::Rect<float>& overlap){
 
 sf::Rect<float> Dynamic::getAABB() const{
     float l, t, r, b;
-    float hw = this->GetSize().x / 2;  //half width
-    float hh = this->GetSize().y / 2;  //half height
+  
+    //float hw = this->GetSize().x / 2;  //half width
+    //float hh = this->GetSize().y / 2;  //half height
+  
+  float hw = 7;
+  float hh = 8;
+  
     l = this->getPosition().x-hw;
     r = this->getPosition().x+hw;
     t = this->getPosition().y-hh;
