@@ -144,7 +144,10 @@ void Dynamic::collideY(const sf::Rect<float>& overlap, float friction){
     //if the offset is less than 0, that means we landed on the ground
     if(offset < 0){
         //cout << "FORCE OF FRICTION: " << -100*friction*this->getVelocity().x << endl;
-        this->applyForce(Vector2D(-100*friction*this->getVelocity().x, 0));
+
+        float force = -10*friction;
+        cout << force << endl;
+        this->applyForce(Vector2D(force*this->getVelocity().x, 0));
         onGround = 1;
     }
 

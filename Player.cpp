@@ -16,7 +16,8 @@ Player::Player(const sf::Image& img, sf::Vector2f startPos, const sf::Input& in)
 
     this->walkSpeed = 300;
     this->runSpeed = 500;
-    this->jumpSpeed = -900;
+    this->jumpSpeed = -600;
+    this->runAccel = 800;
 
 }
 
@@ -64,7 +65,7 @@ void Player::handleInput(){
         if (left) {
             frameState = 1;
             if(fabs(this->getVelocity().x) < maxSpeed)
-                setAcceleration(-500,accY);
+                setAcceleration(-runAccel,accY);
             else
                 setAcceleration(0, accY);
         }
@@ -72,7 +73,7 @@ void Player::handleInput(){
             direction = 0;
             frameState = 1;
             if(fabs(this->getVelocity().x) < maxSpeed)
-                setAcceleration(500,accY);
+                setAcceleration(runAccel,accY);
             else
                 setAcceleration(0, accY);
         }
@@ -86,9 +87,12 @@ void Player::handleInput(){
     if(input.IsKeyDown(sf::Key::Space)){
         if(onGround){
             onGround = 0;
-            setVelocity(getVelocity().x, -500);
+            setVelocity(getVelocity().x, jumpSpeed);
             //frameState = 2;
         }
+    }
+    if(input.IsKeyDown(sf::Key::C)){
+        applyForce(Vector2D(500,0));
     }
 
 

@@ -19,6 +19,7 @@ class Player : public Dynamic{
         float walkSpeed;
         float runSpeed;
         float jumpSpeed;
+        float runAccel;
 
 };
 #endif // PLAYER_H_INCLUDED
