@@ -44,6 +44,10 @@ void Dynamic::update(float time, const Map& map){
     mapCollideX(map);
 
 
+    cout << acc.x << " and vel: " << vel.x << endl;
+    acc = Vector2D(0,0);
+
+
 //    cout << "Velocity:(" << vel.x << "," << vel.y << ")";
 //    cout << "Acceleration:(" << acc.x << "," << acc.y << ")";
 //    cout << "Position:(" << pos.x << "," << pos.y << ")" << endl << endl;
@@ -65,13 +69,13 @@ void Dynamic::mapCollideX(const Map& map){
     sf::Rect<float> overlap;
 
     int x = (this->getVelocity().x>0 ? 1 : -1);
-        for(int i=-1; i<2; i++){
+        for(int i=-1; i<3; i++){
             try{
                 //checks the 3 tiles to the right or left, dependingo n velocity
 
                 //cout<< "Checking tile at (" << xPos+x << "," << yPos+i << ")" << endl;
 
-                const Tile& toCheck = map.at(xPos+x, yPos+i);
+                const Tile& toCheck = (i==2) ? map.at(xPos,yPos) : map.at(xPos+x, yPos+i);
 
                 if(toCheck.IsSolid()){
                     if(toCheck.getAABB().Intersects(this->getAABB(), &overlap)){
@@ -97,15 +101,16 @@ void Dynamic::mapCollideY(const Map& map){
 
     int y = (this->getVelocity().y>0 ? 1 : -1);
 
-    for(int i=-1; i<2; i++){
+
+    for(int i=-1; i<3; i++){
         try{
-            //checks the 3 tiles to the right or left, dependingo n velocity
-            const Tile& toCheck = map.at(xPos+i, yPos+y);
+
+            //checks the 3 tiles to the right or left, depending on velocity, and finally also check the current tile the player is on
+            const Tile& toCheck = (i==2) ? map.at(xPos,yPos) : map.at(xPos+i, yPos+y);
 
             if(toCheck.IsSolid()){
                 if(toCheck.getAABB().Intersects(this->getAABB(), &overlap)){
-                    collideY(overlap);
-                    //cout << "Y Tile collision at: " << xPos+i << " " << yPos+y << endl;
+                    collideY(overlap, toCheck.getFriction());
                 }
             }
         }
@@ -114,6 +119,10 @@ void Dynamic::mapCollideY(const Map& map){
         }
     }
 
+}
+
+void Dynamic::applyForce(Vector2D force){
+    this->acc += force/this->mass;
 }
 
 void Dynamic::collideX(const sf::Rect<float>& overlap){
@@ -127,11 +136,18 @@ void Dynamic::collideX(const sf::Rect<float>& overlap){
 
 }
 
-void Dynamic::collideY(const sf::Rect<float>& overlap){
+void Dynamic::collideY(const sf::Rect<float>& overlap, float friction){
 
-    float offset = (this->getPosition().y < overlap.Top) ? -overlap.GetHeight() : overlap.GetHeight();
 
+    float offset = (this->getVelocity().y > 0) ? -overlap.GetHeight() : overlap.GetHeight();
+
+    //if the offset is less than 0, that means we landed on the ground
     if(offset < 0){
+        //cout << "FORCE OF FRICTION: " << -100*friction*this->getVelocity().x << endl;
+
+        float force = -10*friction;
+        cout << force << endl;
+        this->applyForce(Vector2D(force*this->getVelocity().x, 0));
         onGround = 1;
     }
 
@@ -144,13 +160,10 @@ void Dynamic::collideY(const sf::Rect<float>& overlap){
 
 sf::Rect<float> Dynamic::getAABB() const{
     float l, t, r, b;
-  
     //float hw = this->GetSize().x / 2;  //half width
     //float hh = this->GetSize().y / 2;  //half height
-  
-  float hw = 7;
-  float hh = 8;
-  
+    float hw = 7.f;
+    float hh = 10.f;
     l = this->getPosition().x-hw;
     r = this->getPosition().x+hw;
     t = this->getPosition().y-hh;
@@ -162,3 +175,5 @@ sf::Rect<float> Dynamic::getAABB() const{
     return(sf::Rect<float>(l,t,r,b));
 
 }
+
+

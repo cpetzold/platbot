@@ -13,6 +13,12 @@ Player::Player(const sf::Image& img, sf::Vector2f startPos, const sf::Input& in)
     setAcceleration(Vector2D(0,0));
     frameSpeed = 10;
     this->direction = 1;
+
+    this->walkSpeed = 300;
+    this->runSpeed = 500;
+    this->jumpSpeed = -600;
+    this->runAccel = 800;
+
 }
 
 /*-----------------------------------------
@@ -43,19 +49,23 @@ void Player::handleInput(){
     float accY = getAcceleration().y;
     float accX = getAcceleration().x;
 
-    float maxSpeed = 200;
-    if(input.IsKeyDown(sf::Key::X))maxSpeed=500;
+    float maxSpeed = this->walkSpeed;
+
+    if(input.IsKeyDown(sf::Key::X))maxSpeed=this->runSpeed;
     //left+right movement stuff
+
+    //if both are pressed, stop trying to move
     if (left && right){
         setAcceleration(0, accY);
         frameState = 0;
     } else if(left || right) {
+        //Flip our sprite based on which direction we're going
         FlipX(left);
-        
+
         if (left) {
             frameState = 1;
             if(fabs(this->getVelocity().x) < maxSpeed)
-                setAcceleration(-500,accY);
+                setAcceleration(-runAccel,accY);
             else
                 setAcceleration(0, accY);
         }
@@ -63,7 +73,7 @@ void Player::handleInput(){
             direction = 0;
             frameState = 1;
             if(fabs(this->getVelocity().x) < maxSpeed)
-                setAcceleration(500,accY);
+                setAcceleration(runAccel,accY);
             else
                 setAcceleration(0, accY);
         }
@@ -77,9 +87,16 @@ void Player::handleInput(){
     if(input.IsKeyDown(sf::Key::Space)){
         if(onGround){
             onGround = 0;
+<<<<<<< HEAD
             setVelocity(getVelocity().x, -800);
+=======
+            setVelocity(getVelocity().x, jumpSpeed);
+>>>>>>> origin/master
             //frameState = 2;
         }
+    }
+    if(input.IsKeyDown(sf::Key::C)){
+        applyForce(Vector2D(500,0));
     }
 
 

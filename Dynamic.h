@@ -17,7 +17,7 @@ class Dynamic : public Animatable{
         Vector2D acc;
 
     public:
-        Dynamic(const sf::Image& img, sf::Vector2f startPos, int fw, int fh, int ef=3, float sp=1.0, int st=0, float d=0.9, float m=1.f)
+        Dynamic(const sf::Image& img, sf::Vector2f startPos, int fw, int fh, int ef=3, float sp=1.0, int st=0, float d=2.0, float m=1.f)
         :Animatable(img, startPos, fw, fh, ef, sp, st), damping(d), mass(m){pos.x=startPos.x; pos.y=startPos.y; SetX(pos.x); SetY(pos.y);};
 
         Dynamic();
@@ -35,13 +35,17 @@ class Dynamic : public Animatable{
         void setAcceleration(float x, float y);
         void setVelocity(float x, float y);
 
+        void applyForce(Vector2D force);
+
         void update(float time, const Map& map);
 
         void mapCollideX(const Map& map);
         void mapCollideY(const Map& map);
 
         void collideX(const sf::Rect<float>& overlap);
-        void collideY(const sf::Rect<float>& overlap);
+        void collideY(const sf::Rect<float>& overlap, float friction);
+
+
 
         sf::Rect<float> getAABB() const;
 
