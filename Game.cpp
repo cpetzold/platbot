@@ -15,7 +15,7 @@ Game::~Game() {
 bool Game::Init() {
 
   this->map = Map("test.map", this->data);
-  this->player = new Player(*this->data.GetImage("player.png"), sf::Vector2f(0,0), this->window.GetInput());
+  this->player = new Player(*this->data.GetImage("player.png"), sf::Vector2f(16,320), this->window.GetInput());
   this->player->setShadow(*this->data.GetShadow("player.png"));
 
   //this->collisionMgr(CollisionManager(map));

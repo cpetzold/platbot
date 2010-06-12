@@ -35,13 +35,17 @@ class Dynamic : public Animatable{
         void setAcceleration(float x, float y);
         void setVelocity(float x, float y);
 
+        void applyForce(Vector2D force);
+
         void update(float time, const Map& map);
 
         void mapCollideX(const Map& map);
         void mapCollideY(const Map& map);
 
         void collideX(const sf::Rect<float>& overlap);
-        void collideY(const sf::Rect<float>& overlap);
+        void collideY(const sf::Rect<float>& overlap, float friction);
+
+
 
         sf::Rect<float> getAABB() const;
 

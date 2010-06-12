@@ -16,7 +16,7 @@ Player::Player(const sf::Image& img, sf::Vector2f startPos, const sf::Input& in)
 
     this->walkSpeed = 300;
     this->runSpeed = 500;
-    this->jumpSpeed = -700;
+    this->jumpSpeed = -900;
 
 }
 
@@ -52,10 +52,13 @@ void Player::handleInput(){
 
     if(input.IsKeyDown(sf::Key::X))maxSpeed=this->runSpeed;
     //left+right movement stuff
+
+    //if both are pressed, stop trying to move
     if (left && right){
         setAcceleration(0, accY);
         frameState = 0;
     } else if(left || right) {
+        //Flip our sprite based on which direction we're going
         FlipX(left);
 
         if (left) {
