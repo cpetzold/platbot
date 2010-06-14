@@ -16,8 +16,10 @@ Player::Player(const sf::Image& img, sf::Vector2f startPos, const sf::Input& in)
 
     this->walkSpeed = 300;
     this->runSpeed = 500;
-    this->jumpSpeed = -600;
-    this->runAccel = 800;
+    this->jumpSpeed = 800;
+    this->minJump = 450;
+    this->runAccel = 2000;
+    this->airAccel = 400;
 
 }
 
@@ -51,6 +53,12 @@ void Player::handleInput(){
 
     float maxSpeed = this->walkSpeed;
 
+    float accel = this->runAccel;
+
+    //half acceleration in the air
+    if(!this->onGround) accel = this->airAccel;
+
+
     if(input.IsKeyDown(sf::Key::X))maxSpeed=this->runSpeed;
     //left+right movement stuff
 
@@ -61,11 +69,11 @@ void Player::handleInput(){
     } else if(left || right) {
         //Flip our sprite based on which direction we're going
         FlipX(left);
-
+        cout << this->getVelocity().x << endl;
         if (left) {
             frameState = 1;
             if(fabs(this->getVelocity().x) < maxSpeed)
-                setAcceleration(-runAccel,accY);
+                setAcceleration(-accel,accY);
             else
                 setAcceleration(0, accY);
         }
@@ -73,7 +81,7 @@ void Player::handleInput(){
             direction = 0;
             frameState = 1;
             if(fabs(this->getVelocity().x) < maxSpeed)
-                setAcceleration(runAccel,accY);
+                setAcceleration(accel,accY);
             else
                 setAcceleration(0, accY);
         }
@@ -87,7 +95,17 @@ void Player::handleInput(){
     if(input.IsKeyDown(sf::Key::Space)){
         if(onGround){
             onGround = 0;
-            setVelocity(getVelocity().x, jumpSpeed);
+
+            float jump = this->jumpSpeed * -(fabs(this->getVelocity().x) / this->runSpeed);
+
+
+            cout << "Jump height: " << jump << endl;
+
+            if(jump < this->minJump) jump = -this->minJump;
+
+
+
+            setVelocity(getVelocity().x, jump);
             //frameState = 2;
         }
     }

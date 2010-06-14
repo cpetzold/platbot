@@ -10,7 +10,9 @@ Animatable::Animatable(const sf::Image& img, const sf::Vector2f& pos, int fw, in
     this->endFrame = ef;
     this->frame = 1;
     this->shadow = new sf::Sprite();
-    
+
+    cout << "ANIMATABLE MADE" << endl;
+
     sf::IntRect rect(0, 0, fw, fh);
     SetSubRect(rect);
     this->shadow->SetSubRect(rect);

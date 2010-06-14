@@ -21,7 +21,7 @@ class Dynamic : public Animatable{
         :Animatable(img, startPos, fw, fh, ef, sp, st), damping(d), mass(m){pos.x=startPos.x; pos.y=startPos.y; SetX(pos.x); SetY(pos.y);};
 
         Dynamic();
-        ~Dynamic();
+        //~Dynamic();
 
         Vector2D getPosition() const {return pos;};
         Vector2D getVelocity() const {return vel;};
@@ -39,8 +39,8 @@ class Dynamic : public Animatable{
 
         void update(float time, const Map& map);
 
-        void mapCollideX(const Map& map);
-        void mapCollideY(const Map& map);
+        bool mapCollideX(const Map& map);
+        bool mapCollideY(const Map& map);
 
         void collideX(const sf::Rect<float>& overlap);
         void collideY(const sf::Rect<float>& overlap, float friction);

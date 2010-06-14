@@ -3,9 +3,6 @@
 Dynamic::Dynamic(){
 
     }
-Dynamic::~Dynamic(){
-
-    }
 
 //Set the position of the object
 void Dynamic::setPosition(float x, float y){
@@ -31,21 +28,22 @@ void Dynamic::setVelocity(float x, float y){
 
 void Dynamic::update(float time, const Map& map){
 
-    vel-= vel*damping * time;
-
-    vel+=acc*time;
+    //vel-= vel*damping * time;
 
     Vector2D oldPos = pos;
 
     pos.y+=vel.y*time;
-    mapCollideY(map);
+    if(!mapCollideY(map))
+        onGround = 0;
+
 
     pos.x+=vel.x*time;
     mapCollideX(map);
 
+    vel+=acc*time;
 
-    cout << acc.x << " and vel: " << vel.x << endl;
-    acc = Vector2D(0,0);
+    //cout << acc.x << " and vel: " << vel.x << endl;
+
 
 
 //    cout << "Velocity:(" << vel.x << "," << vel.y << ")";
@@ -60,9 +58,11 @@ void Dynamic::update(float time, const Map& map){
     this->Animatable::update(time);
 }
 
-void Dynamic::mapCollideX(const Map& map){
+bool Dynamic::mapCollideX(const Map& map){
     int xPos = pos.x/32+.5;  //32 is current tilesize
     int yPos = pos.y/32+.5;
+
+    bool collided = false;
 
     //cout << xPos << " " << yPos << endl;
 
@@ -75,11 +75,13 @@ void Dynamic::mapCollideX(const Map& map){
 
                 //cout<< "Checking tile at (" << xPos+x << "," << yPos+i << ")" << endl;
 
+                //This line is for checking the tile that the player is on
                 const Tile& toCheck = (i==2) ? map.at(xPos,yPos) : map.at(xPos+x, yPos+i);
 
                 if(toCheck.IsSolid()){
                     if(toCheck.getAABB().Intersects(this->getAABB(), &overlap)){
                         collideX(overlap);
+                        collided = true;
                         //cout << "X Tile collision at: " << " :" << xPos+x << " " << yPos+i << endl;
                     }
 
@@ -89,15 +91,14 @@ void Dynamic::mapCollideX(const Map& map){
                 //cout << "OUT O' BOUNDSz" << endl;
             }
         }
+    return collided;
 }
 
-void Dynamic::mapCollideY(const Map& map){
+bool Dynamic::mapCollideY(const Map& map){
     int xPos = pos.x/32+.5;  //32 is current tilesize
     int yPos = pos.y/32+.5;
 
-    //cout << x << " " << y;
-
-    sf::Rect<float> overlap;
+    bool collided = false;
 
     int y = (this->getVelocity().y>0 ? 1 : -1);
 
@@ -109,8 +110,9 @@ void Dynamic::mapCollideY(const Map& map){
             const Tile& toCheck = (i==2) ? map.at(xPos,yPos) : map.at(xPos+i, yPos+y);
 
             if(toCheck.IsSolid()){
-                if(toCheck.getAABB().Intersects(this->getAABB(), &overlap)){
-                    collideY(overlap, toCheck.getFriction());
+                if(toCheck.getAABB().Intersects(this->getAABB())){
+                    collideY(toCheck.getAABB(), toCheck.getFriction());
+                    collided = true;
                 }
             }
         }
@@ -119,16 +121,20 @@ void Dynamic::mapCollideY(const Map& map){
         }
     }
 
+    return collided;
+
 }
 
 void Dynamic::applyForce(Vector2D force){
     this->acc += force/this->mass;
 }
 
-void Dynamic::collideX(const sf::Rect<float>& overlap){
+void Dynamic::collideX(const sf::Rect<float>& tileAABB){
 
-    float offset = (this->getPosition().x < overlap.Right) ? -overlap.GetWidth() : overlap.GetWidth();
-    if(offset > 0)cout << offset << endl;
+    sf::Rect<float> currentRect = this->getAABB();
+
+    float offset = (this->getVelocity().x > 0) ?  tileAABB.Left - currentRect.Right : tileAABB.Right - currentRect.Left;
+    //if(offset > 0)cout << offset << endl;
     float fixedX = this->getPosition().x + offset;
 
     this->setPosition(fixedX, this->getPosition().y);
@@ -136,17 +142,18 @@ void Dynamic::collideX(const sf::Rect<float>& overlap){
 
 }
 
-void Dynamic::collideY(const sf::Rect<float>& overlap, float friction){
+void Dynamic::collideY(const sf::Rect<float>& tileAABB, float friction){
 
+    sf::Rect<float> currentRect = this->getAABB();
 
-    float offset = (this->getVelocity().y > 0) ? -overlap.GetHeight() : overlap.GetHeight();
+    float offset = (this->getVelocity().y > 0) ? -(currentRect.Bottom-tileAABB.Top) : tileAABB.Bottom-currentRect.Top;
 
     //if the offset is less than 0, that means we landed on the ground
     if(offset < 0){
         //cout << "FORCE OF FRICTION: " << -100*friction*this->getVelocity().x << endl;
 
-        float force = -10*friction;
-        cout << force << endl;
+        float force = -15*friction;
+
         this->applyForce(Vector2D(force*this->getVelocity().x, 0));
         onGround = 1;
     }

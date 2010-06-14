@@ -15,8 +15,8 @@ Resources::Resources(string dataPath, string imagesPath, string soundBuffersPath
 }
 
 Resources::~Resources() {
-    //for(map<string, sf::Image*>::iterator it = images.begin(); it<images.end(); it++)
-        //delete *it;
+//    for(map<string, sf::Image*>::iterator it = images.begin(); it<images.end(); it++)
+//        delete *it;
 }
 
 sf::Image* Resources::GetImage(string path) {
@@ -26,6 +26,7 @@ sf::Image* Resources::GetImage(string path) {
     this->images[path] = new sf::Image();
     (*this->images[path]).LoadFromFile(path.c_str());
     (*this->images[path]).SetSmooth(false);
+    cout << "conner fails" << endl;
   }
   return this->images[path];
 }
@@ -33,13 +34,13 @@ sf::Image* Resources::GetImage(string path) {
 sf::Image* Resources::GetShadow(string path) {
   string searchPath = this->dataPath + this->imagesPath + path;
   map <string, sf::Image*>::iterator it = this->images.find("s"+searchPath);
-  
+
   if (it == this->images.end()) {
     int shadSize = 2;
     sf::Image* ref = this->GetImage(path);
     this->images["s"+searchPath] = new sf::Image(ref->GetWidth(), ref->GetHeight(), sf::Color(0,0,0,0));
     sf::Color b(0,0,0);
-      
+
     for (int x = 0; x < this->images["s"+searchPath]->GetWidth(); x++) {
       for (int y = 0; y < this->images["s"+searchPath]->GetHeight(); y++) {
         if (ref->GetPixel(x, y).a > 0) {
@@ -52,10 +53,10 @@ sf::Image* Resources::GetShadow(string path) {
         }
       }
     }
-    
+
     this->images["s"+searchPath]->SetSmooth(false);
   }
-    
+
   return this->images["s"+searchPath];
 }
 
