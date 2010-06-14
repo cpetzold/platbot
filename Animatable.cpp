@@ -9,14 +9,15 @@ Animatable::Animatable(const sf::Image& img, const sf::Vector2f& pos, int fw, in
     this->frameState = st;
     this->endFrame = ef;
     this->frame = 1;
-    this->shadow = new sf::Sprite();
-    
+
+    //cout << "ANIMATABLE MADE" << endl;
+
     sf::IntRect rect(0, 0, fw, fh);
     SetSubRect(rect);
-    this->shadow->SetSubRect(rect);
 }
 
 void Animatable::update(float time){
+  if (frameSpeed > 0) {
     this->frame+=time*frameSpeed;
     if(frame >= endFrame+1) frame=1;
 
@@ -30,7 +31,7 @@ void Animatable::update(float time){
     sf::IntRect rect(l,t,r,b);
 
     SetSubRect(rect);
-    this->shadow->SetSubRect(rect);
 
     //cout << "Frame: " << frame << endl << "Speed: " << frameSpeed << endl;
+  }
 }

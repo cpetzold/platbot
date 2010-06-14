@@ -16,7 +16,7 @@ class ObjectManager{
     int tilesize;
 
   public:
-    ObjectManager(Map& m) : map(m){tilesize = map.getTileSize();};
+    ObjectManager(Map& m) : map(m){tilesize = map.getTilesize();};
     ObjectManager();
     void addObject(Dynamic* addedObj);
 

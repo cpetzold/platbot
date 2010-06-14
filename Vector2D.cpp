@@ -74,3 +74,10 @@ void Vector2D::Normalise() {
 float Vector2D::DotProduct(const Vector2D &vect) const {
   return (this->x * vect.x) + (this->y * vect.y);
 }
+
+Vector2D Vector2D::RandCenter(const Vector2D &var) {
+  Vector2D result;
+  if (var.x) result.x = (rand() % (int)var.x) - (var.x/2);
+  if (var.y) result.y = (rand() % (int)var.y) - (var.y/2);
+  return *this + result;
+}

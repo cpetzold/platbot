@@ -39,6 +39,8 @@ public:
   
 	float Magnitude();
 	void Normalise();
+  
+  Vector2D RandCenter(const Vector2D &var);
 };
 
 #endif

@@ -7,13 +7,11 @@
 //Class for animatable sprites
 class Animatable : public sf::Sprite{
     public:
-        Animatable() : sf::Sprite(), shadow() {};
+        Animatable() : sf::Sprite() {};
         Animatable(const sf::Image& img, const sf::Vector2f& pos, int fw, int fh, int ef=3, float sp=10.0, int st=0);
 
         void update(float time);
     
-        void setShadow(sf::Image& shadow) { this->shadow->SetImage(shadow); };
-        sf::Sprite* getShadow() { return this->shadow; };
 
         int frameState;     //animation state; for different animations; ie idle, running, walking, etc
         float frame;        //current frame
@@ -21,9 +19,6 @@ class Animatable : public sf::Sprite{
         int frameWidth;     //width/height in Pixels of each frame
         int frameHeight;
         int endFrame;       //last frame of animation
-    
-    private:
-        sf::Sprite* shadow;
 };
 
 #endif // ANIMATABLE_H_INCLUDED

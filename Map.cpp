@@ -96,25 +96,6 @@ Map::Map(string filename, Resources &data) {
   }
 
   this->dim = Vector2D(this->tiles[0].size(), this->tiles.size());
-  
-  
-  
-  for (int y = 0; y < this->dim.y; y++) {
-    for (int x = 0; x < this->dim.x; x++) {
-      Tile tile = this->tiles[y][x];
-      if (tile.IsVisible() &&
-          (x == 0 || x == this->dim.x-1 || y == 0 || y == this->dim.y-1 ||
-          (!this->tiles[y-1][x].IsVisible() || !this->tiles[y+1][x].IsVisible() || !this->tiles[y][x-1].IsVisible() || !this->tiles[y][x+1].IsVisible()))) {
-
-            sf::Vector2f pos = tile.GetPosition();
-            sf::Vector2f size = tile.GetSize();
-            
-            this->shadows.push_back(sf::Shape::Rectangle(pos.x-2, pos.y-2, pos.x+size.x+2, pos.y+size.y+2, sf::Color(0,0,0,255)));
-          }
-          
-    }
-  }
-  
 }
 
 
@@ -129,12 +110,6 @@ void Map::Draw(sf::RenderWindow &window) {
     }
   }
 
-}
-
-void Map::DrawShadows(sf::RenderWindow &window) {
-  for (int i = 0; i < this->shadows.size(); i++) {
-    window.Draw(this->shadows[i]);
-  }
 }
 
 

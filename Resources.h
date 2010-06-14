@@ -30,7 +30,6 @@ public:
   ~Resources();
 
   sf::Image* GetImage(string path);
-  sf::Image* GetShadow(string path);
   sf::SoundBuffer& GetSoundBuffer(string path);
   sf::Font& GetFont(string path, int charSize);
   sf::Font& GetFont(string path);

@@ -11,6 +11,7 @@ using namespace std;
 
 #include "Resources.h"
 #include "Player.h"
+#include "Effect.h"
 #include "Map.h"
 
 
@@ -25,6 +26,7 @@ private:
   vector <sf::Sprite>   sprites;
   Resources             data;
   Player*               player;
+  Smoke*                effect;
   //ObjectManager      collisionMgr;
   Map                   map;
 

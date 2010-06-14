@@ -14,10 +14,12 @@ Game::~Game() {
 
 bool Game::Init() {
 
+  cout << "GAME INITIALIZED" << endl;
   this->map = Map("test.map", this->data);
-  this->player = new Player(*this->data.GetImage("player.png"), sf::Vector2f(16,320), this->window.GetInput());
-  this->player->setShadow(*this->data.GetShadow("player.png"));
-
+  this->player = new Player(*this->data.GetImage("player.png"), sf::Vector2f(200,200), this->window.GetInput());
+  
+  this->effect = new Smoke(*this->data.GetImage("particles.png"), Vector2D(0, 0), 50, Vector2D(200,200));
+  
   //this->collisionMgr(CollisionManager(map));
   //collisionMgr.addObject(player);
   return true;
@@ -30,6 +32,7 @@ void Game::Update() {
   this->applyGravity(1500.f);
 
   this->player->update(t, this->map);
+  this->effect->Update(t, this->map);
   //this->player->checkMapCollisions(this->map);
 
 
@@ -37,26 +40,11 @@ void Game::Update() {
 }
 
 void Game::Draw() {
-  this->window.Clear(sf::Color(255,255,255,255));
-  //this->window.SetView(this->view);
-
-  /*
-  vector <sf::Sprite>::iterator it = this->sprites.begin();
-  while (it != this->sprites.end()) {
-    this->window.Draw(*it);
-    ++it;
-  }*/
-
-  this->window.Draw(*this->player->getShadow());
-  this->map.DrawShadows(this->window);
-
+  this->window.Clear(sf::Color(34,34,34,255));
 
   this->map.Draw(this->window);
-
   this->window.Draw(*this->player);
-
-
-
+  this->effect->Draw(this->window);
 
   //cout << 1.f / this->window.GetFrameTime() << endl; // show fps
   this->window.Display();
