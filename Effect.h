@@ -6,10 +6,12 @@
 
 class Effect {
 public:
-  Effect(const sf::Image& img, Vector2D offset, int num = 20, Vector2D pos = Vector2D(0,0), Vector2D posVar = Vector2D(0,0), Vector2D vel = Vector2D(0,0), Vector2D velVar = Vector2D(0,0), Vector2D acc = Vector2D(0,0), float life = 30);
+  Effect(const sf::Image& img, Vector2D offset, int num = 20, Vector2D pos = Vector2D(0,0), Vector2D posVar = Vector2D(0,0), Vector2D vel = Vector2D(0,0), Vector2D velVar = Vector2D(0,0), Vector2D acc = Vector2D(0,0), float life = 30, bool repeat = true);
   Effect();
   
   void SetParticle(Particle & p);
+  void SetPosition(Vector2D pos) { this->pos = pos; };
+  void Play();
   
   void Update(float time, const Map& map);
   void Draw(sf::RenderWindow &window);
@@ -23,7 +25,7 @@ private:
   Vector2D posVar;
   Vector2D velVar;
   Vector2D acc;
-  
+  bool repeat;
 };
 
 

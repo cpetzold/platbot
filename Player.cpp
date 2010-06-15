@@ -17,7 +17,7 @@ Player::Player(const sf::Image& img, sf::Vector2f startPos, const sf::Input& in)
     this->walkSpeed = 300;
     this->runSpeed = 500;
     this->jumpSpeed = 800;
-    this->minJump = 450;
+    this->minJump = 1000;
     this->runAccel = 2000;
     this->airAccel = 400;
 

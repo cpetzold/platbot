@@ -15,10 +15,12 @@ Game::~Game() {
 bool Game::Init() {
 
   cout << "GAME INITIALIZED" << endl;
-  this->map = Map("test.map", this->data);
+  this->map = Map("Mario.map", this->data);
   this->player = new Player(*this->data.GetImage("player.png"), sf::Vector2f(200,200), this->window.GetInput());
   
-  this->effect = new Smoke(*this->data.GetImage("particles.png"), Vector2D(0, 0), 50, Vector2D(200,200));
+  this->effect = new Effect(*this->data.GetImage("particles.png"), Vector2D(0, 0), 20, Vector2D(200,200), Vector2D(2,0), Vector2D(0,0), Vector2D(100,100), Vector2D(0, 0), 5, false);
+  
+  //this->view.SetCenter(sf::Vector2f(-1000,200));
   
   //this->collisionMgr(CollisionManager(map));
   //collisionMgr.addObject(player);
@@ -33,10 +35,11 @@ void Game::Update() {
 
   this->player->update(t, this->map);
   this->effect->Update(t, this->map);
+  this->effect->SetPosition(this->player->getPosition());
   //this->player->checkMapCollisions(this->map);
 
 
-  this->view.SetCenter(this->player->GetPosition());
+  this->view.SetCenter(sf::Vector2f(this->player->GetPosition().x, 200));
 }
 
 void Game::Draw() {
@@ -62,7 +65,6 @@ void Game::HandleEvents() {
             this->window.Close();
             break;
           case sf::Key::Space:
-
             break;
           default:
             //cout << this->event.Key.Code << endl;
@@ -78,8 +80,8 @@ void Game::HandleEvents() {
 void Game::HandleInput() {
   const sf::Input& input = this->window.GetInput();
 
-  if (input.IsKeyDown(sf::Key::Up)) {
-
+  if (input.IsKeyDown(sf::Key::Space) && this->player->onGround) {
+      this->effect->Play();
   }
 
   if (input.IsKeyDown(sf::Key::Down)) {

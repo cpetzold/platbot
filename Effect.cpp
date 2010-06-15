@@ -1,6 +1,7 @@
 #include "Effect.h"
 
-Effect::Effect(const sf::Image& img, Vector2D offset, int num, Vector2D pos, Vector2D posVar, Vector2D vel, Vector2D velVar, Vector2D acc, float life): pos(pos), posVar(posVar), vel(vel), velVar(velVar), acc(acc) {
+Effect::Effect(const sf::Image& img, Vector2D offset, int num, Vector2D pos, Vector2D posVar, Vector2D vel, Vector2D velVar, Vector2D acc, float life, bool repeat): pos(pos), posVar(posVar), vel(vel), velVar(velVar), acc(acc), repeat(repeat) {
+  srand(time(NULL));
   
   cout << this->pos.x << endl;
   
@@ -8,6 +9,7 @@ Effect::Effect(const sf::Image& img, Vector2D offset, int num, Vector2D pos, Vec
     Particle p(img, offset, life, acc);
     this->SetParticle(p);
     this->actives.push_back(p);
+    this->particles.push_back(p);
   }
   
 }
@@ -16,13 +18,25 @@ Effect::Effect() {
   
 }
 
+void Effect::Play() {
+  for (int i = 0; i < this->particles.size(); i++) {
+    this->actives.push_back(this->particles[i]);
+    this->SetParticle(this->actives[i]);
+  }
+}
+
 void Effect::Update(float time, const Map& map) {
 
   for (int i = 0; i < this->actives.size(); i++) {
     this->actives[i].Update(time, map);
     
     if (this->actives[i].Dead()) {
-      this->SetParticle(this->actives[i]);
+      
+      if (this->repeat) {
+        this->SetParticle(this->actives[i]);
+      } else {
+        this->actives.erase(this->actives.begin()+i);
+      }
     }
   }
 }

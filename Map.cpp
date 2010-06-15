@@ -13,9 +13,9 @@ Map::Map(string filename, Resources &data) {
 
   ifstream inFile;
   inFile.open(filename.c_str());
-  char buf[2048];
+  char buf[65536];
   while (inFile.good()) {
-    inFile.getline(buf, 2048);
+    inFile.getline(buf, 65536);
     input += buf;
   }
   inFile.close();

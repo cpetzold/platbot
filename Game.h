@@ -26,7 +26,7 @@ private:
   vector <sf::Sprite>   sprites;
   Resources             data;
   Player*               player;
-  Smoke*                effect;
+  Effect*                effect;
   //ObjectManager      collisionMgr;
   Map                   map;
 
