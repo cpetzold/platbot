@@ -1,180 +1,106 @@
 #include "Dynamic.h"
 
-Dynamic::Dynamic(){
+Rect Dynamic::getAABB() const {
+  float l, t, r, b;
 
+  float hw = 0.5f;
+  float hh = 0.5f;
+  
+  l = this->pos.x - hw;
+  r = this->pos.x + hw;
+  t = this->pos.y - hh;
+  b = this->pos.y + hh;
+  
+  return(Rect(l,t,r,b));
+}
+
+void Dynamic::update(float time, const Map& map) {
+  
+  this->vel -= this->vel * this->damping * time;
+  
+  this->pos.y += this->vel.y * time;
+  this->grounded = this->mapCollideY(map);
+
+  this->pos.x += this->vel.x * time;
+  this->mapCollideX(map);
+
+  this->vel += this->acc * time;
+
+  this->Animatable::update(time);
+  
+}
+
+bool Dynamic::mapCollideX(const Map& map) {
+  int xPos = this->pos.x / map.getTilesize() + .5;  //32 is current tilesize
+  int yPos = this->pos.y / map.getTilesize() + .5;
+
+  int x = (this->vel.x > 0 ? 1 : -1);
+  
+  for(int i = -1; i < 3; i++) {
+    const Tile& toCheck = (i == 2) ? map.at(xPos, yPos) : map.at(xPos+x, yPos+i);
+
+    if (toCheck.isSolid()) {
+      if (toCheck.getAABB().intersects(this->getAABB())){
+        collideX(toCheck.getAABB());
+        return true;
+      }
     }
-
-//Set the position of the object
-void Dynamic::setPosition(float x, float y){
-    pos.x = x;
-    pos.y = y;
-    SetX(pos.x);
-    SetY(pos.y);
+  }
+  return false;
 }
 
-//Set the acceleration of the object
-void Dynamic::setAcceleration(float x, float y){
-    acc.x = x;
-    acc.y = y;
-}
+bool Dynamic::mapCollideY(const Map& map) {
+  int xPos = pos.x/ map.getTilesize() + .5;
+  int yPos = pos.y/ map.getTilesize() +.5;
 
-//Set the veleocity of the ojbect
-void Dynamic::setVelocity(float x, float y){
-    vel.x = x;
-    vel.y = y;
-}
+  int y = (this->vel.y > 0 ? 1 : -1);
 
-void Dynamic::update(float time, const Map& map){
+  for(int i = -1; i < 3; i++){
+    //checks the 3 tiles to the right or left, depending on velocity, and finally also check the current tile the player is on
+    const Tile& toCheck = (i==2) ? map.at(xPos,yPos) : map.at(xPos+i, yPos+y);
 
-    vel-= vel*damping * time;
-
-    Vector2D oldPos = pos;
-
-    pos.y+=vel.y*time;
-    if(!mapCollideY(map))
-        onGround = 0;
-
-
-    pos.x+=vel.x*time;
-    mapCollideX(map);
-
-    vel+=acc*time;
-
-    //cout << acc.x << " and vel: " << vel.x << endl;
-
-
-
-//    cout << "Velocity:(" << vel.x << "," << vel.y << ")";
-//    cout << "Acceleration:(" << acc.x << "," << acc.y << ")";
-//    cout << "Position:(" << pos.x << "," << pos.y << ")" << endl << endl;
-
-    this->Animatable::SetX(pos.x);
-    this->Animatable::SetY(pos.y);
-    this->Animatable::update(time);
-}
-
-bool Dynamic::mapCollideX(const Map& map){
-    int xPos = pos.x/map.getTilesize()+.5;  //32 is current tilesize
-    int yPos = pos.y/map.getTilesize()+.5;
-
-    bool collided = false;
-
-    //cout << xPos << " " << yPos << endl;
-
-    sf::Rect<float> overlap;
-
-    int x = (this->getVelocity().x>0 ? 1 : -1);
-        for(int i=-1; i<3; i++){
-            try{
-                //checks the 3 tiles to the right or left, dependingo n velocity
-
-                //cout<< "Checking tile at (" << xPos+x << "," << yPos+i << ")" << endl;
-
-                //This line is for checking the tile that the player is on
-                const Tile& toCheck = (i==2) ? map.at(xPos,yPos) : map.at(xPos+x, yPos+i);
-
-                if(toCheck.IsSolid()){
-                    if(toCheck.getAABB().Intersects(this->getAABB(), &overlap)){
-                        collideX(toCheck.getAABB());
-                        collided = true;
-                        //cout << "X Tile collision at: " << " :" << xPos+x << " " << yPos+i << endl;
-                    }
-
-                }
-            }
-            catch(exception e){
-                //cout << "OUT O' BOUNDSz" << endl;
-            }
-        }
-    return collided;
-}
-
-bool Dynamic::mapCollideY(const Map& map){
-    int xPos = pos.x/32+.5;  //32 is current tilesize
-    int yPos = pos.y/32+.5;
-
-    bool collided = false;
-
-    int y = (this->getVelocity().y>0 ? 1 : -1);
-
-
-    for(int i=-1; i<3; i++){
-        try{
-
-            //checks the 3 tiles to the right or left, depending on velocity, and finally also check the current tile the player is on
-            const Tile& toCheck = (i==2) ? map.at(xPos,yPos) : map.at(xPos+i, yPos+y);
-
-            if(toCheck.IsSolid()){
-                if(toCheck.getAABB().Intersects(this->getAABB())){
-                    collideY(toCheck.getAABB(), toCheck.getFriction());
-                    collided = true;
-                }
-            }
-        }
-        catch(exception e){
-            //cout << "OUT O' BOUNDSz" << endl;
-        }
+    if (toCheck.isSolid()) {
+      if (toCheck.getAABB().intersects(this->getAABB())) {
+        collideY(toCheck.getAABB(), toCheck.getFriction());
+        return true;
+      }
     }
-
-    return collided;
-
-}
-
-void Dynamic::applyForce(Vector2D force){
-    this->acc += force/this->mass;
-}
-
-void Dynamic::collideX(const sf::Rect<float>& tileAABB){
-
-    sf::Rect<float> currentRect = this->getAABB();
-
-    float offset = (this->getVelocity().x > 0) ?  tileAABB.Left - currentRect.Right : tileAABB.Right - currentRect.Left;
-    //if(offset > 0)cout << offset << endl;
-    float fixedX = this->getPosition().x + offset;
-
-    this->setPosition(fixedX, this->getPosition().y);
-    this->setVelocity(0,this->getVelocity().y);
+  }
+  return false;
 
 }
 
-void Dynamic::collideY(const sf::Rect<float>& tileAABB, float friction){
-
-    sf::Rect<float> currentRect = this->getAABB();
-
-    float offset = (this->getVelocity().y > 0) ? -(currentRect.Bottom-tileAABB.Top) : tileAABB.Bottom-currentRect.Top;
-
-    //if the offset is less than 0, that means we landed on the ground
-    if(offset < 0){
-        //cout << "FORCE OF FRICTION: " << -100*friction*this->getVelocity().x << endl;
-
-        //float force = -15*friction;
-
-        //this->applyForce(Vector2D(force*this->getVelocity().x, 0));
-        onGround = 1;
-    }
-
-    float fixedY = this->getPosition().y + offset;
-
-    this->setPosition(this->getPosition().x, fixedY);
-    this->setVelocity(this->getVelocity().x, 0);
-
+void Dynamic::applyForce(Vec force){
+  this->acc += force / this->mass;
 }
 
-sf::Rect<float> Dynamic::getAABB() const{
-    float l, t, r, b;
-    //float hw = this->GetSize().x / 2;  //half width
-    //float hh = this->GetSize().y / 2;  //half height
-    float hw = 0.5f;
-    float hh = 0.5f;
-    l = this->getPosition().x-hw;
-    r = this->getPosition().x+hw;
-    t = this->getPosition().y-hh;
-    b = this->getPosition().y+hh;
+void Dynamic::collideX(const Rect& tileAABB){
+  Rect currentRect = this->getAABB();
+    
+  float offset = (this->vel.x > 0) ?  tileAABB.left - currentRect.right : tileAABB.right - currentRect.left;
 
-    //cout << "Top: " << t << " Bottom: " << b << endl;
-    //cout << "Left: " << l << " Right: " << r << endl;
+  this->pos.x += offset;
+  this->vel.x = 0;
+}
 
-    return(sf::Rect<float>(l,t,r,b));
+void Dynamic::collideY(const Rect& tileAABB, float friction){
+
+  Rect currentRect = this->getAABB();
+
+  float offset = (this->vel.y > 0) ? -(currentRect.bottom - tileAABB.top) : tileAABB.bottom - currentRect.top;
+
+//  if the offset is less than 0, that means we landed on the ground
+  if(offset < 0){
+//    cout << "FORCE OF FRICTION: " << -100*friction*this->getVelocity().x << endl;
+
+//    float force = -15*friction;
+
+//    this->applyForce(Vec(force*this->getVelocity().x, 0));
+    this->grounded = true;
+  }
+
+  this->pos.y += offset;
+  this->vel.y = 0;
 
 }
 

@@ -4,11 +4,8 @@ Map::Map() {
   // Default stuff!
 }
 
-Map::Map(string filename, Resources &data) {
-  using namespace json;
-
-  filename = "data/maps/" + filename;
-
+Map::Map(Gosu::Graphics& graphics, wstring fn) {
+  string filename(fn.begin(), fn.end());
   string input;
 
   ifstream inFile;
@@ -31,40 +28,35 @@ Map::Map(string filename, Resources &data) {
   String version = root["version"];
   String tilesetFilename = root["tileset"]["image"];
   Number tileSizeNum = root["tileset"]["tilesize"];
-  int tileSize = tileSizeNum.Value();
-
-  this->tilesize = tileSize;
-  this->tileset = data.GetImage("tilesets/" + tilesetFilename.Value());
-
+  
+  this->tilesize = tileSizeNum.Value();
+  
+  string ts = tilesetFilename.Value();
+  this->tileset.assign(ts.begin(), ts.end());
+  this->tileset = Gosu::resourcePrefix() + this->tileset;
+  
+  wcout << this->tileset << endl;
+  
   Array tiledefs = root["tiledefs"];
   Array tiles = root["tiles"];
 
   vector<Tile> tileDefinitions;
- 
+  
   Array::const_iterator itTiledefs(tiledefs.Begin()), itTiledefsEnd(tiledefs.End());
   for (; itTiledefs != itTiledefsEnd; ++itTiledefs) {
 
     Object def = *itTiledefs;
 
     if (def.Find("offset") == def.End()) {
-      tileDefinitions.push_back(Tile());
-      continue;
+      Tile tile(graphics, this->tileset, -this->tilesize, -this->tilesize, this->tilesize, false);
+      tileDefinitions.push_back(tile);
+    } else {
+      Number offX = def["offset"][0];
+      Number offY = def["offset"][1];
+      Boolean solid = def["solid"];      
+      Tile tile(graphics, this->tileset, offX.Value(), offY.Value(), this->tilesize, solid.Value());
+      tileDefinitions.push_back(tile);
     }
-
-    Number offX = def["offset"][0];
-    Number offY = def["offset"][1];
-    Boolean solid = def["solid"];
-
-    Tile tile(*(this->tileset), solid.Value());
-
-    int left = tileSize * offX.Value();
-    int top = tileSize * offY.Value();
-    int right = left + tileSize;
-    int bottom = top + tileSize;
-
-    tile.SetSubRect(sf::IntRect(left, top, right, bottom));
-
-    tileDefinitions.push_back(tile);
   }
 
 
@@ -83,36 +75,32 @@ Map::Map(string filename, Resources &data) {
 
       Tile tile(tileDefinitions[tileRef.Value()]);
 
-      tile.SetPosition(sf::Vector2f(x*tileSize, y*tileSize));
-
+      tile.setPosition(Vec(x * this->tilesize, y * this->tilesize));
 
       tileRow.insert(tileRow.begin()+x, tile);
       x++;
     }
 
-    this->tiles.insert(this->tiles.begin()+y, tileRow);
+    this->tiles.insert(this->tiles.begin() + y, tileRow);
     x = 0;
     y++;
   }
 
-  this->dim = Vector2D(this->tiles[0].size(), this->tiles.size());
+  this->dim = Vec(this->tiles[0].size(), this->tiles.size());
 }
 
 
-void Map::Draw(sf::RenderWindow &window) {
-
+void Map::draw() {
   for (int y = 0; y < this->dim.y; y++) {
     for (int x = 0; x < this->dim.x; x++) {
+      
 
-      if (this->tiles[y][x].IsVisible())
-        window.Draw(this->tiles[y][x]);
+      if (this->tiles[y][x].isVisible()) {
+        this->tiles[y][x].draw(x * this->tilesize, y * this->tilesize, 1);
+      }
 
     }
   }
-
 }
 
 
-//Map::~Map() {
-  // clean up yo!
-//}

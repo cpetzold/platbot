@@ -1,28 +1,31 @@
 #ifndef TILE_H
 #define TILE_H
 
-#include <SFML/Graphics.hpp>
+#include <Gosu/Gosu.hpp>
 
-#include "Vector2D.h"
+#include "Vec.h"
+#include "Rect.h"
 
 #include <string>
 #include <iostream>
 using namespace std;
 
-class Tile : public sf::Sprite {
+class Tile : public Gosu::Image {
 private:
+  Vec pos;
   bool solid;
   bool visible;
   float friction;
 
 public:
-  Tile() : sf::Sprite(), solid(false), visible(false) {};
-  Tile(const sf::Image& img, bool sol, float frict = .5) : sf::Sprite(img), solid(sol), visible(true), friction(frict){};
+  Tile(Gosu::Graphics &graphics, const std::wstring &filename, unsigned srcX, unsigned srcY, unsigned size, bool sol, float frict = .5) : Image(graphics, filename, srcX*size, srcY*size, size, size, true), solid(sol), visible(true), friction(frict){};
 
-  bool IsSolid() const{ return this->solid; } ;
-  bool IsVisible() const { return this->visible; } ;
-  float getFriction() const {return this->friction;};
-  sf::Rect<float> getAABB() const;
+  void setPosition(Vec pos) { this->pos = pos; };
+  Vec getPosition() const { return this->pos; };
+  bool isSolid() const{ return this->solid; };
+  bool isVisible() const { return this->visible; };
+  float getFriction() const {return this->friction; };
+  Rect getAABB() const;
 
 };
 

@@ -1,50 +1,28 @@
 #include "Player.h"
 
-/*-----------------------------------------
-Constructor class for Player
-Arguments:
-    img = Image (with animations)
-    startPos = start position of the player
------------------------------------------*/
-
-Player::Player(const sf::Image& img, sf::Vector2f startPos, const sf::Input& in) : Dynamic(img, startPos, 32, 32), input(in), canJump(1){
-    setPosition(Vector2D(startPos.x, startPos.y));
-    setVelocity(Vector2D(0,0));
-    setAcceleration(Vector2D(0,0));
-    frameSpeed = 10;
-    this->direction = 1;
-
-    this->walkSpeed = 300;
-    this->runSpeed = 500;
-    this->jumpSpeed = 800;
-    this->minJump = 1000;
-    this->runAccel = 2000;
-    this->airAccel = 400;
+Player::Player(Gosu::Graphics& graphics, const std::wstring& filename, Vec startPos) : Dynamic(graphics, filename, startPos, 32, 32) {
+  setPosition(Vec(startPos.x, startPos.y));
+  setVelocity(Vec(0,0));
+  setAcceleration(Vec(0,0));
+  this->frameSpeed = 10;
+  
+  this->direction = true;
+  this->canJump = true;
+  
+  this->walkSpeed = 300;
+  this->runSpeed = 500;
+  this->jumpSpeed = 800;
+  this->minJump = 1000;
+  this->runAccel = 2000;
+  this->airAccel = 400;
 
 }
 
-/*-----------------------------------------
-Update method for player
-Calls the parent class' update method to animate
-time is usually given by a Clock variable, giving us the time in seconds since the last update
-
-TODO:  Make a "dynamic" class
------------------------------------------*/
 void Player::update(float time, const Map& map){
     this->Dynamic::update(time, map);
-    //cout << this->getVelocity().x << ", " <<this->getVelocity().y << endl;
-    //cout << this->frameSpeed;
-    //this->FlipX(!direction);
-
-    handleInput();
-
 }
 
-/*-----------------------------------------
-Handles key events
-TODO: handle custom keys... maybe make a std::map to hande?
------------------------------------------*/
-void Player::handleInput(){
+/*void Player::handleInput(){
     bool left = input.IsKeyDown(sf::Key::Left);
     bool right = input.IsKeyDown(sf::Key::Right);
 
@@ -110,9 +88,9 @@ void Player::handleInput(){
         }
     }
     if(input.IsKeyDown(sf::Key::C)){
-        applyForce(Vector2D(500,0));
+        applyForce(Vec(500,0));
     }
 
 
-}
+}*/
 

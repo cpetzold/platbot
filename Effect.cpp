@@ -1,13 +1,13 @@
 #include "Effect.h"
 
-Effect::Effect(const sf::Image& img, Vector2D offset, int num, Vector2D pos, Vector2D posVar, Vector2D vel, Vector2D velVar, Vector2D acc, float life, bool repeat): pos(pos), posVar(posVar), vel(vel), velVar(velVar), acc(acc), repeat(repeat) {
+Effect::Effect(Gosu::Graphics& graphics, const std::wstring& filename, Vec offset, int num, Vec pos, Vec posVar, Vec vel, Vec velVar, Vec acc, float life, bool repeat): pos(pos), posVar(posVar), vel(vel), velVar(velVar), acc(acc), repeat(repeat) {
   srand(time(NULL));
   
   cout << this->pos.x << endl;
   
   for (int i = 0; i < num; i++) {
-    Particle p(img, offset, life, acc);
-    this->SetParticle(p);
+    Particle p(graphics, filename, offset, life, acc);
+    this->setParticle(p);
     this->actives.push_back(p);
     this->particles.push_back(p);
   }
@@ -18,22 +18,22 @@ Effect::Effect() {
   
 }
 
-void Effect::Play() {
+void Effect::play() {
   for (int i = 0; i < this->particles.size(); i++) {
     this->actives.push_back(this->particles[i]);
-    this->SetParticle(this->actives[i]);
+    this->setParticle(this->actives[i]);
   }
 }
 
-void Effect::Update(float time, const Map& map) {
+void Effect::update(float time, const Map& map) {
 
   for (int i = 0; i < this->actives.size(); i++) {
-    this->actives[i].Update(time, map);
+    this->actives[i].update(time, map);
     
-    if (this->actives[i].Dead()) {
+    if (this->actives[i].dead()) {
       
       if (this->repeat) {
-        this->SetParticle(this->actives[i]);
+        this->setParticle(this->actives[i]);
       } else {
         this->actives.erase(this->actives.begin()+i);
       }
@@ -41,16 +41,16 @@ void Effect::Update(float time, const Map& map) {
   }
 }
 
-void Effect::SetParticle(Particle & p) {
-  Vector2D pos = this->pos.RandCenter(this->posVar);
-  Vector2D vel = this->vel.RandCenter(this->velVar);
-  p.Reset(pos, vel);
+void Effect::setParticle(Particle & p) {
+  Vec pos = this->pos.randCenter(this->posVar);
+  Vec vel = this->vel.randCenter(this->velVar);
+  p.reset(pos, vel);
 }
 
-void Effect::Draw(sf::RenderWindow &window) {
+void Effect::draw() {
   
   for (int i = 0; i < this->actives.size(); i++) {
-    window.Draw(this->actives[i]);
+    
   }
   
 }
@@ -58,7 +58,7 @@ void Effect::Draw(sf::RenderWindow &window) {
 
 
 
-void Smoke::Update(float time, const Map& map) {
-  Effect::Update(time, map);
+void Smoke::update(float time, const Map& map) {
+  Effect::update(time, map);
 
 }

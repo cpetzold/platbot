@@ -1,56 +1,47 @@
 #ifndef DYNAMIC_H_INCLUDED
 #define DYNAMIC_H_INCLUDED
 
-#include "Vector2D.h"
+#include <Gosu/Gosu.hpp>
+#include <Gosu/TR1.hpp>
+
+#include "Vec.h"
+#include "Rect.h"
 #include "Animatable.h"
 #include "Map.h"
 
-class Dynamic : public Animatable{
-    private:
-        float damping;
-        float mass;
+class Dynamic : public Animatable {
+private:
+  float damping;
+  float mass;
 
-        Vector2D force;
+  Vec force;
+  Vec pos;
+  Vec vel;
+  Vec acc;
+  bool grounded;
 
-        Vector2D pos;
-        Vector2D vel;
-        Vector2D acc;
+public:
+  Dynamic(Gosu::Graphics& graphics, const std::wstring &filename, Vec start, int fw, int fh, int ef=3, float sp=1.0, int st=0, float d=1.0, float m=1.f) : Animatable(graphics, filename, start, fw, fh, ef, sp, st), damping(d), mass(m), pos(start) {
+  };
 
-    public:
-        Dynamic(const sf::Image& img, sf::Vector2f startPos, int fw, int fh, int ef=3, float sp=1.0, int st=0, float d=1.0, float m=1.f)
-        :Animatable(img, startPos, fw, fh, ef, sp, st), damping(d), mass(m){pos.x=startPos.x; pos.y=startPos.y; SetX(pos.x); SetY(pos.y);};
+  Vec getPosition() const {return pos;};
+  Vec getVelocity() const {return vel;};
+  Vec getAcceleration() const {return acc;};
+  Rect getAABB() const;
 
-        Dynamic();
-        //~Dynamic();
+  void setPosition(Vec newPos){pos = newPos;};
+  void setAcceleration(Vec newAcc){acc = newAcc;};
+  void setVelocity(Vec newVel){vel = newVel;};
+  
+  void applyForce(Vec force);
 
-        Vector2D getPosition() const {return pos;};
-        Vector2D getVelocity() const {return vel;};
-        Vector2D getAcceleration() const {return acc;};
+  void update(float time, const Map& map);
 
-        void setPosition(Vector2D newPos){pos = newPos; SetX(pos.x); SetY(pos.y);};
-        void setAcceleration(Vector2D newAcc){acc = newAcc;};
-        void setVelocity(Vector2D newVel){vel = newVel;};
+  bool mapCollideX(const Map& map);
+  bool mapCollideY(const Map& map);
 
-        void setPosition(float x, float y);
-        void setAcceleration(float x, float y);
-        void setVelocity(float x, float y);
-
-        void applyForce(Vector2D force);
-
-        void update(float time, const Map& map);
-
-        bool mapCollideX(const Map& map);
-        bool mapCollideY(const Map& map);
-
-        void collideX(const sf::Rect<float>& overlap);
-        void collideY(const sf::Rect<float>& overlap, float friction);
-
-
-
-        sf::Rect<float> getAABB() const;
-
-        bool onGround;
-
+  void collideX(const Rect& overlap);
+  void collideY(const Rect& overlap, float friction);
 };
 
 #endif // DYNAMIC_H_INCLUDED

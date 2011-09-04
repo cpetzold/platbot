@@ -1,14 +1,12 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include <SFML/Graphics.hpp>
-
 #include "json/reader.h"
 #include "json/writer.h"
 #include "json/elements.h"
+using namespace json;
 
 #include "Tile.h"
-#include "Resources.h"
 
 #include <string>
 #include <sstream>
@@ -18,21 +16,21 @@ using namespace std;
 
 class Map {
 private:
-  sf::Image* tileset;
+  wstring tileset;
   int tilesize;
-  Vector2D dim;
+  Vec dim;
   vector<vector<Tile> > tiles;
 
 
 public:
 
   Map();
-  Map(string filename, Resources &data);
-  //~Map();
+  Map(Gosu::Graphics& graphics, wstring filename);
+
   const Tile& at(int x, int y) const{
       return tiles.at(y).at(x);
     } ;
-  void Draw(sf::RenderWindow &window);
+  void draw();
 
   int getTilesize() const{return tilesize;};
   int getWidth() const {return dim.x;};

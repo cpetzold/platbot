@@ -2,35 +2,34 @@
 
 using namespace std;
 
-Animatable::Animatable(const sf::Image& img, const sf::Vector2f& pos, int fw, int fh, int ef, float sp, int st) : sf::Sprite(img, pos){
-    this->frameWidth = fw;
-    this->frameHeight = fh;
-    this->frameSpeed = sp;
-    this->frameState = st;
-    this->endFrame = ef;
-    this->frame = 1;
+Animatable::Animatable(Gosu::Graphics &graphics, const std::wstring &filename, Vec pos, int fw, int fh, int ef, float sp, int st):
+  Image(graphics, filename) {
 
-    //cout << "ANIMATABLE MADE" << endl;
+  this->frameWidth = fw;
+  this->frameHeight = fh;
+  this->frameSpeed = sp;
+  this->frameState = st;
+  this->endFrame = ef;
+  this->frame = 1;
 
-    sf::IntRect rect(0, 0, fw, fh);
-    SetSubRect(rect);
 }
 
-void Animatable::update(float time){
-  if (frameSpeed > 0) {
-    this->frame+=time*frameSpeed;
-    if(frame >= endFrame+1) frame=1;
+void Animatable::update(float t){
+  if (this->frameSpeed > 0) {
+    
+    this->frame += this->frameSpeed * t;
+    
+    if (this->frame >= this->endFrame + 1) {
+      this->frame = 1;
+    }
 
     int f = frame;
 
     //Calculate subrect left, top, right, and bottom
-    int l = (f-1)*frameWidth;
-    int t = frameState*frameHeight+1;
-    int r = f*frameWidth;
-    int b = (frameState+1)*frameHeight;
-    sf::IntRect rect(l,t,r,b);
-
-    SetSubRect(rect);
+//    int l = (f - 1) * this->frameWidth;
+//    int t = this->frameState * this->frameHeight + 1;
+//    int r = f * this->frameWidth;
+//    int b = (this->frameState + 1) * this->frameHeight;
 
     //cout << "Frame: " << frame << endl << "Speed: " << frameSpeed << endl;
   }
