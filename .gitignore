@@ -1,3 +1,4 @@
 *.framework
 *.xcodeproj
 *.swp
+.DS_Store
